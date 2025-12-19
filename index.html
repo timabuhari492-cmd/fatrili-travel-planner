@@ -1,1600 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Fatrili’s Travel Essentials Planner</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --bg-main: #050910;
-      --bg-panel: rgba(8, 14, 26, 0.96);
-      --bg-panel-soft: rgba(15, 23, 42, 0.96);
-      --accent: #00f5c8;
-      --accent-soft: rgba(0, 245, 200, 0.2);
-      --accent-strong: #4ae5ff;
-      --text-main: #f9fbff;
-      --text-muted: #9da8c5;
-      --border-subtle: rgba(148, 163, 184, 0.35);
-      --chip-bg: rgba(15, 23, 42, 0.88);
-      --chip-bg-active: rgba(0, 245, 200, 0.18);
-      --danger: #f97373;
-      --radius-lg: 18px;
-      --radius-md: 999px;
-      --shadow-soft: 0 32px 80px rgba(0, 0, 0, 0.55);
-      --transition-fast: 0.15s ease-out;
-      --input-bg: rgba(15, 23, 42, 0.9);
-      --input-border: rgba(148, 163, 184, 0.5);
-      --input-border-focus: rgba(56, 189, 248, 0.95);
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Smart Travel Kit Planner</title>
 
-    * {
-      box-sizing: border-box;
-    }
+<style>
+:root {
+  --bg-dark: #0e1a1a;
+  --card-bg: rgba(20, 40, 40, 0.88);
+  --accent: #3fd0c9;
+  --muted: #b8d6d3;
+}
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", sans-serif;
+* { box-sizing: border-box; }
 
-      /* Brighter overlay so the image is more visible & vibrant */
-      background:
-        linear-gradient(rgba(10, 20, 40, 0.48), rgba(5, 10, 20, 0.82)),
-        url("travel-bg.webp") center/cover no-repeat fixed;
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: white;
+  background: 
+    linear-gradient(rgba(10,20,20,.65), rgba(10,20,20,.65)),
+    url("travel-bg.webp") center/cover fixed no-repeat;
+}
 
-      /* Start position for animation (applies to both layers) */
-      background-position: center top, center top;
+/* Layout */
+.wrapper {
+  max-width: 1200px;
+  margin: auto;
+  padding: 24px;
+}
 
-      color: var(--text-main);
-      -webkit-font-smoothing: antialiased;
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
 
-      /* Slightly faster drift so it’s noticeable but still calm */
-      animation: bgDrift 28s linear infinite alternate;
-    }
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; }
+}
 
-    @keyframes bgDrift {
-      0% {
-        background-position: center top, center top;
-      }
-      100% {
-        background-position: center center, center center;
-      }
-    }
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
+}
 
-    body::before {
-      /* subtle “flight path” / glow overlay – toned down so colours pop more */
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        radial-gradient(circle at 15% 20%, rgba(148, 163, 184, 0.12) 0, transparent 55%),
-        radial-gradient(circle at 80% 75%, rgba(148, 163, 184, 0.08) 0, transparent 55%);
-      opacity: 0.35;
-      mix-blend-mode: screen;
-    }
+/* Headings */
+h1 { font-size: 1.9rem; margin-bottom: 8px; }
+h2 { font-size: 1.2rem; margin-top: 24px; }
+p { color: var(--muted); font-size: 0.95rem; }
 
-    body::after {
-      /* faint longitude/latitude grid */
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(30, 64, 175, 0.18) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(30, 64, 175, 0.18) 1px, transparent 1px);
-      background-size: 220px 220px;
-      opacity: 0.1;
-      mix-blend-mode: soft-light;
-    }
+/* Inputs */
+label { display: block; margin-top: 14px; font-weight: 600; }
 
-    .app-shell {
-      max-width: 1180px;
-      margin: 32px auto 40px;
-      padding: 0 20px;
-      position: relative;
-      z-index: 1;
-    }
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 6px;
+  font-size: 0.95rem;
+}
 
-    header {
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+button {
+  background: var(--accent);
+  color: #003333;
+  font-weight: 700;
+  cursor: pointer;
+}
 
-    header .eyebrow {
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      font-size: 11px;
-      color: var(--accent-strong);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
+button.secondary {
+  background: transparent;
+  border: 1px dashed var(--accent);
+  color: var(--accent);
+}
 
-    header .eyebrow span.dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 12px rgba(34, 211, 238, 0.85);
-    }
+/* Options */
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
 
-    header h1 {
-      font-size: 26px;
-      font-weight: 650;
-      line-height: 1.35;
-      margin: 0;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
-    }
+.option {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--accent);
+}
 
-    header .subtitle {
-      font-size: 14px;
-      color: var(--text-muted);
-      max-width: 560px;
-      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
-    }
+.option.active {
+  background: var(--accent);
+  color: #003333;
+  font-weight: 700;
+}
 
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-    }
+/* Collapsible */
+details {
+  margin-top: 16px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 10px;
+  padding: 10px;
+}
 
-    .pill {
-      padding: 6px 12px;
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      font-size: 12px;
-      color: var(--text-muted);
-      background: rgba(15, 23, 42, 0.92);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      backdrop-filter: blur(10px);
-    }
+summary {
+  cursor: pointer;
+  font-weight: 700;
+}
 
-    .pill span.dot-mini {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: rgba(248, 250, 252, 0.8);
-      opacity: 0.5;
-    }
-
-    .planner-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-      gap: 18px;
-      align-items: stretch;
-    }
-
-    .planner-panel {
-      border-radius: var(--radius-lg);
-      background: var(--bg-panel-soft);
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      box-shadow: var(--shadow-soft);
-      padding: 20px 22px;
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(22px);
-    }
-
-    .planner-panel.right {
-      background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(8, 47, 73, 0.98));
-    }
-
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .panel-header h2 {
-      margin: 0;
-      font-size: 17px;
-      letter-spacing: 0.02em;
-    }
-
-    .panel-header .status {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-muted);
-    }
-
-    .step-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-muted);
-      margin-top: 14px;
-      margin-bottom: 6px;
-    }
-
-    .field-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    label.field {
-      flex: 1 1 160px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 12px;
-    }
-
-    label.field span {
-      color: var(--text-muted);
-    }
-
-    select, input[type="text"] {
-      border-radius: 999px;
-      border: 1px solid var(--input-border);
-      background: var(--input-bg);
-      color: var(--text-main);
-      padding: 8px 12px;
-      font-size: 13px;
-      outline: none;
-      min-height: 34px;
-    }
-
-    select:focus, input[type="text"]:focus {
-      border-color: var(--input-border-focus);
-      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.65);
-    }
-
-    .chip-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .chip-toggle {
-      border-radius: var(--radius-md);
-      padding: 6px 10px;
-      border: 1px solid var(--border-subtle);
-      background: var(--chip-bg);
-      color: var(--text-muted);
-      font-size: 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      user-select: none;
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        color var(--transition-fast),
-        transform var(--transition-fast);
-    }
-
-    .chip-toggle input {
-      display: none;
-    }
-
-    .chip-toggle span.indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.8);
-      background: transparent;
-    }
-
-    .chip-toggle.active {
-      background: var(--chip-bg-active);
-      border-color: var(--accent);
-      color: var(--accent-strong);
-      transform: translateY(-0.5px);
-    }
-
-    .chip-toggle.active span.indicator {
-      background: var(--accent);
-      border-color: transparent;
-      box-shadow: 0 0 10px rgba(34, 211, 238, 0.7);
-    }
-
-    .radio-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .radio-pill {
-      position: relative;
-      border-radius: var(--radius-md);
-      padding: 7px 12px;
-      font-size: 12px;
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      background: var(--chip-bg);
-      cursor: pointer;
-      user-select: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        color var(--transition-fast),
-        transform var(--transition-fast);
-    }
-
-    .radio-pill input {
-      display: none;
-    }
-
-    .radio-pill .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.9);
-    }
-
-    .radio-pill.active {
-      background: var(--chip-bg-active);
-      border-color: var(--accent);
-      color: var(--accent-strong);
-      transform: translateY(-0.5px);
-    }
-
-    .radio-pill.active .dot {
-      background: var(--accent);
-      border-color: transparent;
-      box-shadow: 0 0 10px rgba(34, 211, 238, 0.7);
-    }
-
-    .checkbox {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .checkbox input {
-      margin-top: 1px;
-      accent-color: var(--accent);
-    }
-
-    .fine-print {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .divider {
-      height: 1px;
-      background: linear-gradient(
-        to right,
-        transparent,
-        rgba(148, 163, 184, 0.4),
-        transparent
-      );
-      margin: 16px 0 10px;
-    }
-
-    .pill-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: var(--radius-md);
-      font-size: 11px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      color: var(--text-muted);
-    }
-
-    .pill-badge .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 8px rgba(34, 211, 238, 0.8);
-    }
-
-    .kit-summary-line {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    .kit-list {
-      margin-top: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-height: 520px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .kit-section {
-      padding: 10px 10px 11px;
-      border-radius: 12px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.35);
-    }
-
-    .kit-section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 4px;
-    }
-
-    .kit-section-header h3 {
-      margin: 0;
-      font-size: 13px;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      color: #e5ecff;
-    }
-
-    .kit-section-header span {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .kit-items {
-      list-style: none;
-      padding-left: 14px;
-      margin: 4px 0 0;
-      font-size: 12px;
-      color: #e2e8f0;
-    }
-
-    .kit-items li + li {
-      margin-top: 1px;
-    }
-
-    .kit-empty-state {
-      font-size: 13px;
-      color: var(--text-muted);
-      padding: 12px 10px;
-      border-radius: 12px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px dashed rgba(148, 163, 184, 0.5);
-    }
-
-    .kit-empty-state strong {
-      color: var(--accent-strong);
-      font-weight: 500;
-    }
-
-    .kit-pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 10px;
-      font-size: 11px;
-    }
-
-    .kit-tag {
-      border-radius: 999px;
-      padding: 3px 8px;
-      border: 1px solid rgba(148, 163, 184, 0.45);
-      color: var(--text-muted);
-      background: rgba(15, 23, 42, 0.94);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .kit-tag .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: rgba(148, 163, 184, 0.85);
-    }
-
-    .kit-note {
-      margin-top: 6px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    @media (max-width: 880px) {
-      .planner-layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .planner-panel.right {
-        margin-top: 12px;
-      }
-    }
-  </style>
+/* Output */
+.kit h3 {
+  margin-bottom: 6px;
+}
+.kit small {
+  color: var(--muted);
+  display: block;
+  margin-bottom: 10px;
+}
+</style>
 </head>
+
 <body>
-  <div class="app-shell">
-    <header>
-      <div class="eyebrow">
-        <span class="dot"></span>
-        FATRILI’S TRAVEL ESSENTIALS PLANNER GUIDE · TRAVEL PLANNER BUILDING KIT
-      </div>
-      <h1>
-        Tell me where you’re heading, who you’re travelling with, and what matters to you
-        (skin, hair, faith, comfort). I’ll build your kit.
-      </h1>
-      <p class="subtitle">
-        Country + climate + pollution &amp; wind + your skin and hair type + your activity + any Muslim prayer needs
-        = a smart, essential kit with only what you’ll actually use.
-      </p>
-      <div class="pill-row">
-        <div class="pill"><span class="dot-mini"></span> Climate-based</div>
-        <div class="pill"><span class="dot-mini"></span> Pollution &amp; wind aware</div>
-        <div class="pill"><span class="dot-mini"></span> Water safety aware</div>
-        <div class="pill"><span class="dot-mini"></span> Activity type</div>
-        <div class="pill"><span class="dot-mini"></span> Skin &amp; hair friendly</div>
-        <div class="pill"><span class="dot-mini"></span> Faith-friendly</div>
-      </div>
-    </header>
+<div class="wrapper">
+
+<h1>Build your smart travel essentials kit</h1>
+<p>You don’t need to know exact conditions — just choose what feels closest. You can’t get this wrong.</p>
+
+<div class="grid">
+
+<!-- LEFT: PLANNER -->
+<div class="card">
+
+<h2>Your trip</h2>
+
+<label>Primary destination (where you’ll spend most of your time)</label>
+<input placeholder="Country"/>
+<input placeholder="City (optional, for better accuracy)"/>
+
+<div id="extraStops"></div>
+<button class="secondary" onclick="addStop()">➕ Add another stop (optional)</button>
+
+<label>Travel start date</label>
+<input type="date"/>
+
+<h2>Trip style</h2>
+<div class="options" id="tripStyle">
+  <div class="option">City / sightseeing</div>
+  <div class="option">Nature / outdoors</div>
+  <div class="option">Beach / resort</div>
+  <div class="option">Business / work</div>
+</div>
+
+<h2>Climate</h2>
+<p><small>Smart estimate available — you can always change this.</small></p>
+<div class="options" id="climate">
+  <div class="option">Hot & humid</div>
+  <div class="option">Hot & dry</div>
+  <div class="option">Cold & dry</div>
+  <div class="option">Cold & wet</div>
+  <div class="option">Mixed / unsure</div>
+</div>
+
+<button style="margin-top:10px;" onclick="alert('Auto-fill will be added later using weather data.')">
+Auto-fill from smart climate estimate (optional)
+</button>
+
+<h2>You</h2>
+<label>Skin type</label>
+<select>
+  <option>Normal</option>
+  <option>Oily</option>
+  <option>Dry</option>
+  <option>Sensitive</option>
+</select>
+
+<label>Hair / scalp</label>
+<select>
+  <option>Normal</option>
+  <option>Oily scalp</option>
+  <option>Dry / itchy</option>
+  <option>Dandruff-prone</option>
+  <option>Hair fall concern</option>
+</select>
+
+<h2>Trip length</h2>
+<select>
+  <option>Weekend (1–3 days)</option>
+  <option>4–7 days</option>
+  <option>8–14 days</option>
+  <option>15+ days</option>
+</select>
+
+<details>
+  <summary>Optional: Faith-friendly travel add-ons</summary>
+  <p>Prayer essentials, wudu-friendly hygiene, modesty-friendly items.</p>
+</details>
+
+</div>
+
+<!-- RIGHT: OUTPUT -->
+<div class="card kit">
+<h2>Your kit</h2>
+
+<h3>Hygiene & core</h3>
+<small>Based on your climate and trip duration</small>
+<ul>
+<li>Toiletry containers</li>
+<li>Travel towel</li>
+<li>Wet wipes</li>
+</ul>
+
+<h3>Skin & hair</h3>
+<small>Adjusted for your skin and scalp preferences</small>
+<ul>
+<li>Cleanser</li>
+<li>Moisturiser</li>
+<li>Hair care essentials</li>
+</ul>
+
+<h3>Comfort & extras</h3>
+<small>Chosen to suit your trip style</small>
+<ul>
+<li>Portable charger</li>
+<li>Travel adapter</li>
+<li>Reusable pouch</li>
+</ul>
+
+</div>
+
+</div>
+</div>
+
+<script>
+function activateGroup(groupId) {
+  document.querySelectorAll(`#${groupId} .option`).forEach(opt => {
+    opt.onclick = () => {
+      document.querySelectorAll(`#${groupId} .option`).forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+    };
+  });
+}
+
+activateGroup("tripStyle");
+activateGroup("climate");
+
+let stopCount = 0;
+function addStop() {
+  if (stopCount >= 2) return alert("Maximum 3 locations supported.");
+  stopCount++;
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <label>Additional stop</label>
+    <input placeholder="Country"/>
+    <input placeholder="City (optional)"/>
+  `;
+  document.getElementById("extraStops").appendChild(div);
+}
+</script>
 
-    <main class="planner-layout">
-      <!-- LEFT PANEL -->
-      <section class="planner-panel left" aria-label="Planner controls">
-        <div class="panel-header">
-          <h2>Planner inputs</h2>
-          <div class="status">Step 1–4 · Destination, climate, you &amp; duration</div>
-        </div>
-
-        <!-- STEP 1 -->
-        <div class="step-label">Step 1 · Destination</div>
-        <div class="field-row">
-          <label class="field">
-            <span>Country</span>
-            <select id="country">
-              <option value="">Choose a country…</option>
-              <!-- 195+ countries -->
-              <option>Afghanistan</option>
-              <option>Albania</option>
-              <option>Algeria</option>
-              <option>Andorra</option>
-              <option>Angola</option>
-              <option>Antigua and Barbuda</option>
-              <option>Argentina</option>
-              <option>Armenia</option>
-              <option>Australia</option>
-              <option>Austria</option>
-              <option>Azerbaijan</option>
-              <option>Bahamas</option>
-              <option>Bahrain</option>
-              <option>Bangladesh</option>
-              <option>Barbados</option>
-              <option>Belarus</option>
-              <option>Belgium</option>
-              <option>Belize</option>
-              <option>Benin</option>
-              <option>Bhutan</option>
-              <option>Bolivia</option>
-              <option>Bosnia and Herzegovina</option>
-              <option>Botswana</option>
-              <option>Brazil</option>
-              <option>Brunei</option>
-              <option>Bulgaria</option>
-              <option>Burkina Faso</option>
-              <option>Burundi</option>
-              <option>Cabo Verde</option>
-              <option>Cambodia</option>
-              <option>Cameroon</option>
-              <option>Canada</option>
-              <option>Central African Republic</option>
-              <option>Chad</option>
-              <option>Chile</option>
-              <option>China</option>
-              <option>Colombia</option>
-              <option>Comoros</option>
-              <option>Congo (Republic of)</option>
-              <option>Congo (Democratic Republic)</option>
-              <option>Costa Rica</option>
-              <option>Croatia</option>
-              <option>Cuba</option>
-              <option>Cyprus</option>
-              <option>Czech Republic</option>
-              <option>Denmark</option>
-              <option>Djibouti</option>
-              <option>Dominica</option>
-              <option>Dominican Republic</option>
-              <option>Ecuador</option>
-              <option>Egypt</option>
-              <option>El Salvador</option>
-              <option>Equatorial Guinea</option>
-              <option>Eritrea</option>
-              <option>Estonia</option>
-              <option>Eswatini</option>
-              <option>Ethiopia</option>
-              <option>Fiji</option>
-              <option>Finland</option>
-              <option>France</option>
-              <option>Gabon</option>
-              <option>Gambia</option>
-              <option>Georgia</option>
-              <option>Germany</option>
-              <option>Ghana</option>
-              <option>Greece</option>
-              <option>Grenada</option>
-              <option>Guatemala</option>
-              <option>Guinea</option>
-              <option>Guinea-Bissau</option>
-              <option>Guyana</option>
-              <option>Haiti</option>
-              <option>Honduras</option>
-              <option>Hungary</option>
-              <option>Iceland</option>
-              <option>India</option>
-              <option>Indonesia</option>
-              <option>Iran</option>
-              <option>Iraq</option>
-              <option>Ireland</option>
-              <option>Israel</option>
-              <option>Italy</option>
-              <option>Jamaica</option>
-              <option>Japan</option>
-              <option>Jordan</option>
-              <option>Kazakhstan</option>
-              <option>Kenya</option>
-              <option>Kiribati</option>
-              <option>Korea (North)</option>
-              <option>Korea (South)</option>
-              <option>Kosovo</option>
-              <option>Kuwait</option>
-              <option>Kyrgyzstan</option>
-              <option>Laos</option>
-              <option>Latvia</option>
-              <option>Lebanon</option>
-              <option>Lesotho</option>
-              <option>Liberia</option>
-              <option>Libya</option>
-              <option>Liechtenstein</option>
-              <option>Lithuania</option>
-              <option>Luxembourg</option>
-              <option>Madagascar</option>
-              <option>Malawi</option>
-              <option>Malaysia</option>
-              <option>Maldives</option>
-              <option>Mali</option>
-              <option>Malta</option>
-              <option>Marshall Islands</option>
-              <option>Mauritania</option>
-              <option>Mauritius</option>
-              <option>Mexico</option>
-              <option>Micronesia</option>
-              <option>Moldova</option>
-              <option>Monaco</option>
-              <option>Mongolia</option>
-              <option>Montenegro</option>
-              <option>Morocco</option>
-              <option>Mozambique</option>
-              <option>Myanmar</option>
-              <option>Namibia</option>
-              <option>Nauru</option>
-              <option>Nepal</option>
-              <option>Netherlands</option>
-              <option>New Zealand</option>
-              <option>Nicaragua</option>
-              <option>Niger</option>
-              <option>Nigeria</option>
-              <option>North Macedonia</option>
-              <option>Norway</option>
-              <option>Oman</option>
-              <option>Pakistan</option>
-              <option>Palau</option>
-              <option>Palestine</option>
-              <option>Panama</option>
-              <option>Papua New Guinea</option>
-              <option>Paraguay</option>
-              <option>Peru</option>
-              <option>Philippines</option>
-              <option>Poland</option>
-              <option>Portugal</option>
-              <option>Qatar</option>
-              <option>Romania</option>
-              <option>Russia</option>
-              <option>Rwanda</option>
-              <option>Saint Kitts and Nevis</option>
-              <option>Saint Lucia</option>
-              <option>Saint Vincent and the Grenadines</option>
-              <option>Samoa</option>
-              <option>San Marino</option>
-              <option>Sao Tome and Principe</option>
-              <option>Saudi Arabia</option>
-              <option>Senegal</option>
-              <option>Serbia</option>
-              <option>Seychelles</option>
-              <option>Sierra Leone</option>
-              <option>Singapore</option>
-              <option>Slovakia</option>
-              <option>Slovenia</option>
-              <option>Solomon Islands</option>
-              <option>Somalia</option>
-              <option>South Africa</option>
-              <option>South Sudan</option>
-              <option>Spain</option>
-              <option>Sri Lanka</option>
-              <option>Sudan</option>
-              <option>Suriname</option>
-              <option>Sweden</option>
-              <option>Switzerland</option>
-              <option>Syria</option>
-              <option>Taiwan</option>
-              <option>Tajikistan</option>
-              <option>Tanzania</option>
-              <option>Thailand</option>
-              <option>Timor-Leste</option>
-              <option>Togo</option>
-              <option>Tonga</option>
-              <option>Trinidad and Tobago</option>
-              <option>Tunisia</option>
-              <option>Turkey</option>
-              <option>Turkmenistan</option>
-              <option>Tuvalu</option>
-              <option>Uganda</option>
-              <option>Ukraine</option>
-              <option>United Arab Emirates</option>
-              <option>United Kingdom</option>
-              <option>United States</option>
-              <option>Uruguay</option>
-              <option>Uzbekistan</option>
-              <option>Vanuatu</option>
-              <option>Vatican City</option>
-              <option>Venezuela</option>
-              <option>Vietnam</option>
-              <option>Yemen</option>
-              <option>Zambia</option>
-              <option>Zimbabwe</option>
-              <option>Other</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>Season / month</span>
-            <select id="season">
-              <option value="">Rough season…</option>
-              <option>Spring</option>
-              <option>Summer</option>
-              <option>Autumn</option>
-              <option>Winter</option>
-              <option>Rainy / monsoon</option>
-            </select>
-          </label>
-        </div>
-
-        <!-- STEP 2 -->
-        <div class="step-label">Step 2 · Climate &amp; environment profile</div>
-        <div class="chip-group" id="climate-group" data-role="climate-group">
-          <label class="chip-toggle active">
-            <input type="radio" name="climate" value="hot-humid" checked />
-            <span class="indicator"></span> Hot &amp; humid
-          </label>
-          <label class="chip-toggle">
-            <input type="radio" name="climate" value="hot-dry" />
-            <span class="indicator"></span> Hot &amp; dry
-          </label>
-          <label class="chip-toggle">
-            <input type="radio" name="climate" value="cold-dry" />
-            <span class="indicator"></span> Cold &amp; dry
-          </label>
-          <label class="chip-toggle">
-            <input type="radio" name="climate" value="cold-wet" />
-            <span class="indicator"></span> Cold &amp; wet
-          </label>
-          <label class="chip-toggle">
-            <input type="radio" name="climate" value="mixed" />
-            <span class="indicator"></span> Mixed / unsure
-          </label>
-        </div>
-
-        <div class="field-row" style="margin-top: 10px;">
-          <label class="field">
-            <span>Average temperature (optional)</span>
-            <select id="temperature">
-              <option value="">Unsure / auto</option>
-              <option value="below-0">&lt; 0°C</option>
-              <option value="0-10">0–10°C</option>
-              <option value="11-20">11–20°C</option>
-              <option value="21-30">21–30°C</option>
-              <option value="above-30">&gt; 30°C</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="field-row">
-          <label class="field">
-            <span>Pollution level</span>
-            <select id="pollutionLevel">
-              <option value="">Not needed / skip</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>Wind index</span>
-            <select id="windLevel">
-              <option value="">Not needed / skip</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </label>
-        </div>
-        <div class="field-row">
-          <label class="field">
-            <span>Fog level</span>
-            <select id="fogLevel">
-              <option value="">Not needed / skip</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>Rain</span>
-            <select id="rainLevel">
-              <option value="">Not needed / skip</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </label>
-        </div>
-
-        <!-- STEP 3 -->
-        <div class="step-label">Step 3 · You</div>
-        <label class="field">
-          <span>Skin type</span>
-          <div class="radio-row" id="skin-row">
-            <label class="radio-pill active">
-              <span class="dot"></span> Oily
-              <input type="radio" name="skinType" value="oily" checked />
-            </label>
-            <label class="radio-pill">
-              <span class="dot"></span> Combination
-              <input type="radio" name="skinType" value="combination" />
-            </label>
-            <label class="radio-pill">
-              <span class="dot"></span> Dry
-              <input type="radio" name="skinType" value="dry" />
-            </label>
-            <label class="radio-pill">
-              <span class="dot"></span> Sensitive
-              <input type="radio" name="skinType" value="sensitive" />
-            </label>
-          </div>
-        </label>
-
-        <div class="field-row" style="margin-top: 10px;">
-          <label class="field">
-            <span>Hair / scalp type</span>
-            <select id="hairType">
-              <option value="">Select hair / scalp type…</option>
-              <option>Straight</option>
-              <option>Wavy</option>
-              <option>Curly</option>
-              <option>Coily / very curly</option>
-              <option>Short (men)</option>
-              <option>Scalp focus / sensitive scalp</option>
-              <option>Covered (hijab most of the day)</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="field-row" style="margin-top: 8px;">
-          <label class="field">
-            <span>Beard length (optional)</span>
-            <select id="beardLength">
-              <option value="">Select beard length…</option>
-              <option value="short">Short / stubble</option>
-              <option value="medium">Medium</option>
-              <option value="long">Long</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="checkbox">
-          <input type="checkbox" id="preferBidet" />
-          <label for="preferBidet">
-            I prefer water cleaning (bidet style) over only toilet paper.
-          </label>
-        </div>
-        <div class="checkbox">
-          <input type="checkbox" id="withKids" />
-          <label for="withKids">
-            I’m travelling with kids / toddlers.
-          </label>
-        </div>
-        <p class="fine-print">
-          These help us prioritise the right hygiene tools, sizes and refills for your kit.
-        </p>
-
-        <!-- STEP 4 · TRIP DURATION -->
-        <div class="step-label">Step 4 · Trip duration (optional)</div>
-        <div class="field-row">
-          <label class="field">
-            <span>Trip duration</span>
-            <select id="tripDuration">
-              <option value="">Not needed / skip</option>
-              <option value="1">1 day</option>
-              <option value="2">2 days</option>
-              <option value="3">3 days</option>
-              <option value="4">4 days</option>
-              <option value="5">5 days</option>
-              <option value="6">6 days</option>
-              <option value="7">7 days</option>
-              <option value="8">8 days</option>
-              <option value="9">9 days</option>
-              <option value="10">10 days</option>
-              <option value="11">11 days</option>
-              <option value="12">12 days</option>
-              <option value="13">13 days</option>
-              <option value="14">14 days</option>
-              <option value="15">15 days</option>
-              <option value="16">16 days</option>
-              <option value="17">17 days</option>
-              <option value="18">18 days</option>
-              <option value="19">19 days</option>
-              <option value="20">20 days</option>
-              <option value="21">21 days</option>
-              <option value="22">22 days</option>
-              <option value="23">23 days</option>
-              <option value="24">24 days</option>
-              <option value="25">25 days</option>
-              <option value="26">26 days</option>
-              <option value="27">27 days</option>
-              <option value="28">28 days</option>
-              <option value="29">29 days</option>
-              <option value="30">30 days</option>
-              <option value=">30">More than 30 days</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="divider"></div>
-
-        <!-- FAITH & PRAYER -->
-        <div class="step-label">Optional · Faith &amp; prayer needs</div>
-        <div class="checkbox">
-          <input type="checkbox" id="muslimTraveller" />
-          <label for="muslimTraveller">
-            I’m a <strong>Muslim traveller</strong> and want a prayer-ready kit.
-          </label>
-        </div>
-        <p class="fine-print">
-          Tick this if you’d like us to suggest compact prayer-friendly items (sajjadah / “tikar”,
-          telekung, dzikir counter, tasbih, Qibla compass, etc.).
-        </p>
-
-        <div id="muslimOptions" style="margin-top: 8px; display: none;">
-          <span class="pill-badge">
-            <span class="dot"></span>
-            Muslim traveller mode on
-          </span>
-
-          <div style="margin-top: 10px;">
-            <div class="checkbox">
-              <input type="checkbox" id="telekung" />
-              <label for="telekung">
-                Add a <strong>lightweight travel telekung set</strong> (recommended for women).
-              </label>
-            </div>
-            <div class="checkbox">
-              <input type="checkbox" id="tikar" />
-              <label for="tikar">
-                Add a <strong>mini head-only “tikar”</strong> with a small click counter for
-                <em>sujud</em> count.
-              </label>
-            </div>
-            <div class="checkbox">
-              <input type="checkbox" id="dzikirRing" />
-              <label for="dzikirRing">
-                Add a <strong>digital ring counter</strong> for <em>dzikir / tasbih</em>.
-              </label>
-            </div>
-            <div class="checkbox">
-              <input type="checkbox" id="qiblaCompass" />
-              <label for="qiblaCompass">
-                Add a small <strong>Qibla compass</strong> or digital Qibla keychain.
-              </label>
-            </div>
-            <div class="checkbox">
-              <input type="checkbox" id="tasbihBeads" />
-              <label for="tasbihBeads">
-                Add a compact <strong>tasbih</strong> (prayer beads) set.
-              </label>
-            </div>
-            <div class="checkbox">
-              <input type="checkbox" id="privacyTent" />
-              <label for="privacyTent">
-                I often drive / camp and have car boot space – add a
-                <strong>pop-up privacy tent</strong> (for prayer / changing), like the disc cover
-                shown in the Reel.
-              </label>
-            </div>
-          </div>
-
-          <p class="fine-print">
-            We’ll keep all of these as compact and lightweight as possible. The privacy tent will
-            only be suggested for road trips / car travel.
-          </p>
-        </div>
-      </section>
-
-      <!-- RIGHT PANEL -->
-      <section class="planner-panel right" aria-label="Suggested kit">
-        <div class="panel-header">
-          <h2>Step 5 · Your kit</h2>
-          <div class="status" id="kitStatus">Waiting for your selections…</div>
-        </div>
-        <p class="kit-summary-line" id="kitSummaryIntro">
-          Climate, environment, duration &amp; country tuned. Choose a country, climate, environment
-          levels and your skin &amp; hair type (plus faith needs if relevant) to see a tailored kit.
-        </p>
-
-        <div class="kit-pill-row" id="activeTags"></div>
-
-        <div class="kit-list" id="kitList">
-          <div class="kit-empty-state">
-            <strong>Start on the left.</strong> Once you’ve picked at least a climate and skin
-            type, we’ll assemble a hygiene &amp; care kit tuned to:
-            <ul style="margin: 4px 0 0 16px; padding: 0; font-size: 11px;">
-              <li>how your skin behaves in that climate,</li>
-              <li>pollution, wind, fog and rain levels,</li>
-              <li>how long you’re going for,</li>
-              <li>whether you have kids / toddlers with you, and</li>
-              <li>whether you’re a Muslim traveller who needs prayer-friendly tools.</li>
-            </ul>
-          </div>
-        </div>
-
-        <p class="kit-note" id="kitNote"></p>
-      </section>
-    </main>
-  </div>
-
-  <script>
-    (function () {
-      const state = {
-        country: "",
-        season: "",
-        climate: "hot-humid",
-        temperature: "",
-        pollution: "",
-        wind: "",
-        fog: "",
-        rain: "",
-        skinType: "oily",
-        hairType: "",
-        beardLength: "",
-        preferBidet: false,
-        withKids: false,
-        tripDuration: "",
-        muslimTraveller: false,
-        telekung: false,
-        tikar: false,
-        dzikirRing: false,
-        qiblaCompass: false,
-        tasbihBeads: false,
-        privacyTent: false,
-      };
-
-      const els = {
-        country: document.getElementById("country"),
-        season: document.getElementById("season"),
-        hairType: document.getElementById("hairType"),
-        beardLength: document.getElementById("beardLength"),
-        preferBidet: document.getElementById("preferBidet"),
-        withKids: document.getElementById("withKids"),
-        tripDuration: document.getElementById("tripDuration"),
-        muslimTraveller: document.getElementById("muslimTraveller"),
-        muslimOptions: document.getElementById("muslimOptions"),
-        telekung: document.getElementById("telekung"),
-        tikar: document.getElementById("tikar"),
-        dzikirRing: document.getElementById("dzikirRing"),
-        qiblaCompass: document.getElementById("qiblaCompass"),
-        tasbihBeads: document.getElementById("tasbihBeads"),
-        privacyTent: document.getElementById("privacyTent"),
-        climateGroup: document.getElementById("climate-group"),
-        skinRow: document.getElementById("skin-row"),
-        pollutionLevel: document.getElementById("pollutionLevel"),
-        windLevel: document.getElementById("windLevel"),
-        fogLevel: document.getElementById("fogLevel"),
-        rainLevel: document.getElementById("rainLevel"),
-        temperature: document.getElementById("temperature"),
-        kitStatus: document.getElementById("kitStatus"),
-        kitTags: document.getElementById("activeTags"),
-        kitList: document.getElementById("kitList"),
-        kitNote: document.getElementById("kitNote"),
-      };
-
-      function init() {
-        // Basic selects
-        els.country.addEventListener("change", () => {
-          state.country = els.country.value;
-          buildKit();
-        });
-        els.season.addEventListener("change", () => {
-          state.season = els.season.value;
-          buildKit();
-        });
-        els.hairType.addEventListener("change", () => {
-          state.hairType = els.hairType.value;
-          buildKit();
-        });
-        els.beardLength.addEventListener("change", () => {
-          state.beardLength = els.beardLength.value;
-          buildKit();
-        });
-
-        // Trip duration
-        els.tripDuration.addEventListener("change", () => {
-          state.tripDuration = els.tripDuration.value;
-          buildKit();
-        });
-
-        // Environment selects
-        els.temperature.addEventListener("change", () => {
-          state.temperature = els.temperature.value;
-          buildKit();
-        });
-        els.pollutionLevel.addEventListener("change", () => {
-          state.pollution = els.pollutionLevel.value;
-          buildKit();
-        });
-        els.windLevel.addEventListener("change", () => {
-          state.wind = els.windLevel.value;
-          buildKit();
-        });
-        els.fogLevel.addEventListener("change", () => {
-          state.fog = els.fogLevel.value;
-          buildKit();
-        });
-        els.rainLevel.addEventListener("change", () => {
-          state.rain = els.rainLevel.value;
-          buildKit();
-        });
-
-        // Checkboxes
-        els.preferBidet.addEventListener("change", () => {
-          state.preferBidet = els.preferBidet.checked;
-          buildKit();
-        });
-        els.withKids.addEventListener("change", () => {
-          state.withKids = els.withKids.checked;
-          buildKit();
-        });
-        els.muslimTraveller.addEventListener("change", () => {
-          state.muslimTraveller = els.muslimTraveller.checked;
-          els.muslimOptions.style.display = state.muslimTraveller ? "block" : "none";
-          buildKit();
-        });
-        els.telekung.addEventListener("change", () => {
-          state.telekung = els.telekung.checked;
-          buildKit();
-        });
-        els.tikar.addEventListener("change", () => {
-          state.tikar = els.tikar.checked;
-          buildKit();
-        });
-        els.dzikirRing.addEventListener("change", () => {
-          state.dzikirRing = els.dzikirRing.checked;
-          buildKit();
-        });
-        els.qiblaCompass.addEventListener("change", () => {
-          state.qiblaCompass = els.qiblaCompass.checked;
-          buildKit();
-        });
-        els.tasbihBeads.addEventListener("change", () => {
-          state.tasbihBeads = els.tasbihBeads.checked;
-          buildKit();
-        });
-        els.privacyTent.addEventListener("change", () => {
-          state.privacyTent = els.privacyTent.checked;
-          buildKit();
-        });
-
-        // Climate chips – use radio change (iOS friendly)
-        els.climateGroup.addEventListener("change", (e) => {
-          if (e.target && e.target.name === "climate") {
-            state.climate = e.target.value;
-            els.climateGroup.querySelectorAll(".chip-toggle").forEach((label) => {
-              const input = label.querySelector("input[type='radio']");
-              label.classList.toggle("active", input && input.checked);
-            });
-            buildKit();
-          }
-        });
-
-        // Skin type – listen on radios
-        els.skinRow.addEventListener("change", (e) => {
-          if (e.target && e.target.name === "skinType") {
-            state.skinType = e.target.value;
-            els.skinRow.querySelectorAll(".radio-pill").forEach((label) => {
-              const input = label.querySelector("input[type='radio']");
-              label.classList.toggle("active", input && input.checked);
-            });
-            buildKit();
-          }
-        });
-
-        buildKit();
-      }
-
-      function buildKit() {
-        buildKitTags();
-
-        const kit = {
-          hygiene: [],
-          skinHair: [],
-          faith: [],
-          kids: [],
-          extras: [],
-        };
-
-        // Core hygiene
-        kit.hygiene.push("Travel-size toothbrush & toothpaste");
-        kit.hygiene.push("Compact deodorant");
-        kit.hygiene.push("Refillable 100 ml bottles (shampoo / body wash / lotion)");
-        kit.hygiene.push("Foldable quick-dry face towel");
-
-        // Climate logic
-        switch (state.climate) {
-          case "hot-humid":
-            kit.skinHair.push("Lightweight gel moisturiser (non-comedogenic)");
-            kit.skinHair.push("SPF50 PA++++ sweat-resistant sunscreen");
-            kit.skinHair.push("Oil-control blotting papers");
-            break;
-          case "hot-dry":
-            kit.skinHair.push("Hydrating gel-cream moisturiser");
-            kit.skinHair.push("SPF50 PA++++ broad spectrum sunscreen");
-            kit.skinHair.push("Hydrating facial mist (refillable)");
-            break;
-          case "cold-dry":
-            kit.skinHair.push("Rich ceramide moisturiser");
-            kit.skinHair.push("Intensive lip balm (non-tinted)");
-            kit.skinHair.push("Hand cream stick (pocket size)");
-            break;
-          case "cold-wet":
-            kit.skinHair.push("Barrier cream for cold & damp weather (cheeks & hands)");
-            kit.skinHair.push("Rich lip balm and anti-frizz serum or cream");
-            kit.skinHair.push("Quick-dry microfibre hair towel for wet conditions");
-            break;
-          case "mixed":
-          default:
-            kit.skinHair.push("Balanced moisturiser suitable for mixed weather");
-            kit.skinHair.push("SPF50 PA++++ everyday sunscreen");
-            break;
-        }
-
-        // Temperature refinement (optional)
-        if (state.temperature === "below-0" || state.temperature === "0-10") {
-          kit.skinHair.push("Extra-occlusive balm for cheeks & knuckles in very cold weather");
-        } else if (state.temperature === "above-30") {
-          kit.skinHair.push("Extra sweat-resistant SPF and body deodorising wipes");
-        }
-
-        // Skin type refinement
-        if (state.skinType === "oily") {
-          kit.skinHair.push("Gel-based, low-foam cleanser (oil-control)");
-        } else if (state.skinType === "dry" || state.skinType === "sensitive") {
-          kit.skinHair.push("Creamy, non-stripping face cleanser");
-        } else if (state.skinType === "combination") {
-          kit.skinHair.push("Gentle foaming cleanser for combination skin");
-        }
-
-        // Hair / scalp logic
-        if (state.hairType) {
-          if (state.hairType === "Covered (hijab most of the day)") {
-            kit.skinHair.push("Scalp-refreshing spray for under-hijab comfort");
-            kit.skinHair.push("Travel-size dry shampoo (no white cast)");
-          } else if (state.hairType === "Short (men)") {
-            kit.skinHair.push("2-in-1 shampoo & body wash (low fragrance)");
-            kit.skinHair.push("Compact styling product (cream or paste) for short hair");
-          } else if (state.hairType.indexOf("Scalp focus") !== -1) {
-            kit.skinHair.push("Scalp tonic or serum for sensitive / thinning scalp");
-            kit.skinHair.push("Gentle, low-sulfate shampoo focused on scalp health");
-          } else {
-            kit.skinHair.push("Travel-size shampoo & conditioner matched to hair type");
-          }
-        }
-
-        // Beard items
-        if (state.beardLength === "short") {
-          kit.skinHair.push("Small beard oil or balm for short / stubble beard");
-        } else if (state.beardLength === "medium") {
-          kit.skinHair.push("Beard oil & small comb for medium beard");
-        } else if (state.beardLength === "long") {
-          kit.skinHair.push("Beard oil + compact beard brush for long beard");
-        }
-
-        // Bidet preference
-        if (state.preferBidet) {
-          kit.hygiene.push("Collapsible travel bidet bottle (leak-proof)");
-          kit.hygiene.push("Extra resealable bags for wet wipes / tissue disposal");
-        }
-
-        // Kids / toddlers
-        if (state.withKids) {
-          kit.kids.push("Child-friendly body wash & shampoo (tear-free)");
-          kit.kids.push("Packet of fragrance-free baby wipes");
-          kit.kids.push("Small digital thermometer & space for kid-safe meds");
-        }
-
-        // Faith & prayer
-        if (state.muslimTraveller) {
-          kit.faith.push("Compact travel sajjadah / prayer mat that folds into a pouch");
-          if (state.telekung) {
-            kit.faith.push("Lightweight travel telekung set (quick-dry, opaque)");
-          }
-          if (state.tikar) {
-            kit.faith.push(
-              "Mini head-only “tikar” with small click counter to track sujud / rakaat"
-            );
-          }
-          if (state.dzikirRing) {
-            kit.faith.push("Digital dzikir ring counter for tasbih on flights / in queues");
-          }
-          if (state.qiblaCompass) {
-            kit.faith.push("Pocket-size Qibla compass or digital keychain for fast direction finding");
-          }
-          if (state.tasbihBeads) {
-            kit.faith.push("Compact tasbih (33/99 beads) in a soft pouch");
-          }
-          if (state.privacyTent) {
-            kit.faith.push(
-              "Pop-up privacy tent (prayer / changing) – best for car trips and camping"
-            );
-          }
-        }
-
-        // Environment logic – pollution
-        if (state.pollution === "high") {
-          kit.extras.push("Pack of KF94 / N95-style masks for high pollution days");
-          kit.hygiene.push("Nasal saline spray to rinse after heavy pollution exposure");
-          kit.skinHair.push("Lubricating eye drops for irritated eyes in dusty / polluted air");
-        } else if (state.pollution === "medium") {
-          kit.extras.push("Reusable lightweight mask for dusty or polluted days");
-        }
-
-        // Wind
-        if (state.wind === "high") {
-          kit.skinHair.push("Wind-protective lip balm (heavy-duty)");
-          kit.extras.push("Lightweight hooded windbreaker or space for it in kit");
-        } else if (state.wind === "medium") {
-          kit.skinHair.push("Lip balm and hand cream to prevent wind-chapping");
-        }
-
-        // Fog
-        if (state.fog === "high") {
-          kit.extras.push("Small USB-rechargeable torch for low-visibility evenings");
-          kit.extras.push("Reflective strap / tag for bag or stroller");
-        } else if (state.fog === "medium") {
-          kit.extras.push("Anti-fog wipes for glasses or helmet visor");
-        }
-
-        // Rain
-        if (state.rain === "high") {
-          kit.extras.push("Ultra-packable rain jacket or poncho");
-          kit.extras.push("Waterproof pouch for passport & phone");
-        } else if (state.rain === "medium") {
-          kit.extras.push("Compact travel umbrella");
-        }
-
-        // Destination-based extras (example logic)
-        if (state.country === "Japan" && state.season === "Winter") {
-          kit.extras.push("Disposable heat packs for pockets");
-        }
-        if (state.country === "Saudi Arabia" || state.country === "Turkey") {
-          kit.extras.push("Extra sweat-absorbing inner caps / underscarves");
-        }
-
-        // Trip duration logic (based on days)
-        let days = null;
-        if (state.tripDuration) {
-          if (state.tripDuration === ">30") {
-            days = 31;
-          } else {
-            const parsed = parseInt(state.tripDuration, 10);
-            if (!Number.isNaN(parsed)) days = parsed;
-          }
-        }
-
-        if (days) {
-          if (days <= 4) {
-            kit.extras.push("Only mini sizes needed – focus on travel minis and samples.");
-          } else if (days <= 10) {
-            kit.hygiene.push("Extra refill bottle for shampoo / body wash (7–10 days).");
-          } else if (days <= 21) {
-            kit.hygiene.push(
-              "Full 100 ml bottles for liquids; consider small laundry soap or detergent sheets."
-            );
-            kit.extras.push("Travel laundry bar or detergent sheets for washing clothes.");
-          } else {
-            kit.hygiene.push(
-              "Plan to restock toiletries after arrival – kit covers first 1–2 weeks comfortably."
-            );
-            kit.extras.push("Foldable tote bag for local supermarket / pharmacy runs.");
-          }
-
-          // Slight tweak based on country & long stays
-          if (days >= 14 && (state.country === "Japan" || state.country === "Germany")) {
-            kit.extras.push(
-              "Simple label stickers to mark your bottles if you top-up from local drugstores."
-            );
-          }
-        }
-
-        renderKit(kit);
-      }
-
-      function buildKitTags() {
-        const tags = [];
-        const climateMap = {
-          "hot-humid": "Hot & humid",
-          "hot-dry": "Hot & dry",
-          "cold-dry": "Cold & dry",
-          "cold-wet": "Cold & wet",
-          mixed: "Mixed / unsure",
-        };
-        const levelMap = {
-          low: "Low",
-          medium: "Medium",
-          high: "High",
-        };
-        const tempMap = {
-          "below-0": "<0°C",
-          "0-10": "0–10°C",
-          "11-20": "11–20°C",
-          "21-30": "21–30°C",
-          "above-30": ">30°C",
-        };
-
-        if (state.country) tags.push(state.country);
-        if (state.season) tags.push(state.season);
-        if (state.climate) tags.push(climateMap[state.climate] || state.climate);
-        if (state.temperature) tags.push("Temp: " + (tempMap[state.temperature] || state.temperature));
-        if (state.skinType) tags.push(`Skin: ${state.skinType}`);
-        if (state.hairType) tags.push(`Hair/scalp: ${state.hairType}`);
-        if (state.beardLength) tags.push(`Beard: ${levelMap[state.beardLength] || state.beardLength}`);
-        if (state.pollution) tags.push(`Pollution: ${levelMap[state.pollution]}`);
-        if (state.wind) tags.push(`Wind: ${levelMap[state.wind]}`);
-        if (state.fog) tags.push(`Fog: ${levelMap[state.fog]}`);
-        if (state.rain) tags.push(`Rain: ${levelMap[state.rain]}`);
-        if (state.tripDuration) {
-          if (state.tripDuration === ">30") {
-            tags.push("Trip: >30 days");
-          } else {
-            tags.push(`Trip: ${state.tripDuration} days`);
-          }
-        }
-        if (state.withKids) tags.push("With kids / toddlers");
-        if (state.preferBidet) tags.push("Bidet / water cleaning");
-        if (state.muslimTraveller) tags.push("Muslim traveller mode");
-
-        els.kitTags.innerHTML = "";
-        if (!tags.length) return;
-
-        tags.forEach((tag) => {
-          const span = document.createElement("span");
-          span.className = "kit-tag";
-          const dot = document.createElement("span");
-          dot.className = "dot";
-          span.appendChild(dot);
-          span.appendChild(document.createTextNode(tag));
-          els.kitTags.appendChild(span);
-        });
-      }
-
-      function renderKit(kit) {
-        const hasAny =
-          kit.hygiene.length ||
-          kit.skinHair.length ||
-          kit.faith.length ||
-          kit.kids.length ||
-          kit.extras.length;
-
-        els.kitStatus.textContent = hasAny
-          ? "Kit ready · Tuned to your profile"
-          : "Waiting for your selections…";
-
-        const container = document.createElement("div");
-        container.className = "kit-list";
-
-        const dedupe = (arr) => [...new Set(arr)];
-
-        function section(title, hint, items) {
-          if (!items.length) return;
-          const sec = document.createElement("section");
-          sec.className = "kit-section";
-
-          const header = document.createElement("div");
-          header.className = "kit-section-header";
-
-          const h3 = document.createElement("h3");
-          h3.textContent = title;
-
-          const span = document.createElement("span");
-          span.textContent = hint;
-
-          header.appendChild(h3);
-          header.appendChild(span);
-          sec.appendChild(header);
-
-          const ul = document.createElement("ul");
-          ul.className = "kit-items";
-          items.forEach((text) => {
-            const li = document.createElement("li");
-            li.textContent = text;
-            ul.appendChild(li);
-          });
-          sec.appendChild(ul);
-
-          container.appendChild(sec);
-        }
-
-        section("Hygiene & Core", "Non-negotiable travel basics", dedupe(kit.hygiene));
-        section("Skin & Hair / Scalp", "Matched to your climate & type", dedupe(kit.skinHair));
-        section(
-          "Faith & Prayer",
-          state.muslimTraveller ? "Compact Muslim traveller add-ons" : "Optional items",
-          dedupe(kit.faith)
-        );
-        section("Kids & Family", "If you’re travelling with little ones", dedupe(kit.kids));
-        section(
-          "Environment, Duration & Extras",
-          "Only if they make sense for this trip",
-          dedupe(kit.extras)
-        );
-
-        els.kitList.innerHTML = "";
-        if (!hasAny) {
-          const empty = document.createElement("div");
-          empty.className = "kit-empty-state";
-          empty.innerHTML =
-            "<strong>Start on the left.</strong> Once you’ve picked at least a climate and skin type, we’ll assemble a climate, duration & faith-aware hygiene kit.";
-          els.kitList.appendChild(empty);
-        } else {
-          els.kitList.replaceWith(container);
-          els.kitList = container;
-        }
-
-        // Notes
-        const notes = [];
-        if (state.muslimTraveller) {
-          notes.push(
-            "Faith & prayer items stay as light as possible. The privacy tent is only recommended if you mentioned car / camping travel."
-          );
-        }
-        if (state.preferBidet) {
-          notes.push(
-            "Bidet-style tools are refillable so you never rely only on dry toilet paper in unfamiliar bathrooms."
-          );
-        }
-        if (state.withKids) {
-          notes.push("Kid items are kept compact so they don’t swallow the adult kit.");
-        }
-        if (state.pollution || state.wind || state.fog || state.rain || state.temperature) {
-          notes.push(
-            "Environment add-ons respond to pollution, wind, fog, rain and temperature only if you set them – leaving them as “Not needed / unsure” keeps the kit lighter."
-          );
-        }
-        if (state.tripDuration) {
-          notes.push(
-            "Trip duration affects how many refills vs full sizes we suggest and whether we add laundry helpers or restock hints at your destination."
-          );
-        }
-        els.kitNote.textContent = notes.join(" ");
-      }
-
-      init();
-    })();
-  </script>
 </body>
 </html>
