@@ -1,924 +1,231 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Fatirli Smart Travel Kit Planner</title>
-  <style>
-    :root{
-      --bg:#06131a;
-      --card: rgba(8, 22, 32, .78);
-      --stroke: rgba(255,255,255,.12);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.66);
-      --muted2: rgba(255,255,255,.5);
-      --teal:#29f3d1;
-      --teal2:#18bca8;
-      --gold:#ffd24a;
-      --shadow: 0 24px 80px rgba(0,0,0,.5);
-      --radius: 18px;
-    }
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color:var(--text);
-      background: var(--bg);
-      overflow-x:hidden;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fatirli Smart Travel Kit Planner</title>
 
-    /* Background */
-    .bg{ position:fixed; inset:0; z-index:-3; background:#021017; }
-    .bg::before{
-      content:"";
-      position:absolute; inset:-40px;
-      background-image:url("travel-bg.webp");
-      background-size:cover;
-      background-position:55% 45%;
-      filter:saturate(1.18) contrast(1.05) brightness(.98);
-      opacity:.95;
-      transform: translate3d(0,0,0);
-      will-change: background-position, transform;
-      animation: drift 18s ease-in-out infinite alternate;
-    }
-    .bg::after{
-      content:""; position:absolute; inset:0;
-      background:
-        radial-gradient(1200px 700px at 50% 25%, rgba(0,0,0,.08), rgba(0,0,0,.55) 60%, rgba(0,0,0,.7)),
-        linear-gradient(180deg, rgba(0,0,0,.38), rgba(0,0,0,.62));
-      z-index:1;
-    }
-    @keyframes drift{
-      0% { background-position:52% 44%; transform:scale(1.02); }
-      50%{ background-position:56% 48%; transform:scale(1.03); }
-      100%{ background-position:50% 46%; transform:scale(1.02); }
-    }
-    @media (prefers-reduced-motion: reduce){ .bg::before{ animation:none; } }
+<style>
+:root {
+  --bg: #0b1320;
+  --card: rgba(10,18,32,0.75);
+  --accent: #2ef2c9;
+  --text: #e9f1f7;
+  --muted: #9fb3c8;
+  --border: rgba(255,255,255,0.08);
+}
 
-    /* Header */
-    .header{
-      width:min(1120px, 100%);
-      margin: 0 auto;
-      padding: 28px 16px 10px;
-    }
-    .kicker{
-      display:flex; align-items:center; gap:10px;
-      font-size:13px; letter-spacing:.18em; text-transform:uppercase;
-      color: rgba(255,255,255,.75);
-    }
-    .dot{ width:9px;height:9px;border-radius:99px;background:var(--teal); box-shadow:0 0 16px rgba(41,243,209,.55); }
-    h1{
-      margin: 10px 0 6px;
-      font-size: clamp(22px, 2.4vw, 34px);
-      line-height:1.15;
-      text-shadow: 0 10px 30px rgba(0,0,0,.55);
-    }
-    .sub{
-      margin:0;
-      color: rgba(255,255,255,.72);
-      max-width: 82ch;
-      font-size: 14.5px;
-      line-height:1.55;
-    }
+body {
+  margin:0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
 
-    /* Layout */
-    .wrap{
-      min-height:100vh;
-      padding: 14px 16px 54px;
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
-    }
-    .container{
-      width:min(1120px, 100%);
-      display:flex;
-      gap: 18px;
-      align-items:flex-start;
-    }
-    .card{
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    .left{ flex: 0 0 420px; padding: 16px; }
-    .right{ flex: 1; padding: 16px; min-height: 520px; }
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 24px;
+}
 
-    .sectionTitle{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin: 6px 0 10px;
-    }
-    .sectionTitle h2{ margin:0; font-size: 15.5px; letter-spacing:.02em; }
-    .small{ color: var(--muted); font-size: 12.5px; line-height:1.4; }
+h1 {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
 
-    label{ display:block; margin: 10px 0 6px; color: rgba(255,255,255,.78); font-size: 12.5px; }
-    input[type="text"], input[type="date"], select{
-      width:100%;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.26);
-      color: var(--text);
-      outline:none;
-    }
-    input[type="text"]::placeholder{ color: rgba(255,255,255,.38); }
-    select option{ background:#06131a; color:#fff; }
+.subtitle {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
 
-    .row{ display:flex; gap: 10px; }
-    .row > div{ flex:1; }
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
 
-    .chips{ display:flex; flex-wrap:wrap; gap: 8px; margin-top: 6px; }
-    .chip{
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.18);
-      color: rgba(255,255,255,.84);
-      font-size: 12px;
-      cursor:pointer;
-      user-select:none;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      transition: .15s ease;
-      font-weight: 800;
-    }
-    .chip:hover{ border-color: rgba(41,243,209,.35); }
-    .chip.on{
-      border-color: rgba(41,243,209,.55);
-      box-shadow: 0 0 0 2px rgba(41,243,209,.14);
-      background: rgba(41,243,209,.10);
-      color: rgba(255,255,255,.95);
-    }
-    .chip .miniDot{ width:8px;height:8px;border-radius:99px; background: rgba(255,255,255,.25); }
-    .chip.on .miniDot{ background: var(--teal); box-shadow: 0 0 12px rgba(41,243,209,.6); }
+label {
+  font-size: 13px;
+  color: var(--muted);
+  display:block;
+  margin-top:12px;
+}
 
-    .btn{
-      width:100%;
-      margin-top: 10px;
-      border: 1px solid rgba(41,243,209,.45);
-      color:#06131a;
-      background: linear-gradient(90deg, rgba(41,243,209,1), rgba(24,188,168,1));
-      padding: 10px 12px;
-      border-radius: 12px;
-      cursor:pointer;
-      font-weight: 900;
-      letter-spacing:.01em;
-      box-shadow: 0 12px 34px rgba(0,0,0,.28);
-    }
-    .btn:active{ transform: translateY(1px); }
+input, select {
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#0d1626;
+  color:var(--text);
+}
 
-    details{
-      margin-top: 12px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      border-radius: 14px;
-      overflow:hidden;
-    }
-    summary{
-      list-style:none;
-      cursor:pointer;
-      padding: 10px 12px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-      color: rgba(255,255,255,.9);
-      font-size: 13px;
-      font-weight: 900;
-    }
-    summary::-webkit-details-marker{ display:none; }
-    .badgeHint{
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(41,243,209,.35);
-      background: rgba(41,243,209,.08);
-      color: rgba(255,255,255,.86);
-      font-size: 12px;
-      white-space:nowrap;
-    }
-    .detailsBody{ padding: 0 12px 12px; color: var(--muted); font-size: 12.5px; line-height:1.5; }
-    .checkrow{ display:flex; align-items:flex-start; gap: 10px; margin: 10px 0; }
-    .checkrow input{ margin-top:2px; }
-    .checkrow b{ color: rgba(255,255,255,.92); }
+button {
+  margin-top:16px;
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:none;
+  background: var(--accent);
+  color:#00251c;
+  font-weight:600;
+  cursor:pointer;
+}
 
-    /* Output header + tabs */
-    .kitHeader{
-      display:flex; align-items:flex-end; justify-content:space-between; gap: 12px;
-      margin-bottom: 8px;
-    }
-    .kitHeader h2{ margin:0; font-size: 16px; font-weight: 950; }
-    .pill{
-      font-size: 12px;
-      color: rgba(255,255,255,.85);
-      border: 1px solid rgba(255,255,255,.16);
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.18);
-      white-space:nowrap;
-    }
+.section-title {
+  font-weight:600;
+  margin-bottom:8px;
+}
 
-    .notice{
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: 16px;
-      border: 1px dashed rgba(255,255,255,.18);
-      background: rgba(0,0,0,.14);
-      color: rgba(255,255,255,.72);
-      font-size: 12.5px;
-      line-height:1.5;
-    }
+.kit-section {
+  margin-bottom: 14px;
+}
 
-    .tabs{
-      display:flex; gap:8px; flex-wrap:wrap;
-      margin-top: 10px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.14);
-      border-radius: 14px;
-      padding: 8px;
-    }
-    .tabBtn{
-      flex: 1 1 auto;
-      min-width: 120px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      color: rgba(255,255,255,.86);
-      padding: 10px 12px;
-      border-radius: 12px;
-      cursor:pointer;
-      font-weight: 950;
-      font-size: 12.5px;
-      transition: .15s ease;
-    }
-    .tabBtn:hover{ border-color: rgba(41,243,209,.35); }
-    .tabBtn.active{
-      border-color: rgba(41,243,209,.55);
-      box-shadow: 0 0 0 2px rgba(41,243,209,.12);
-      background: rgba(41,243,209,.10);
-      color: rgba(255,255,255,.95);
-    }
+.tag {
+  font-size:11px;
+  padding:3px 8px;
+  border-radius:999px;
+  margin-left:6px;
+}
 
-    .panel{ display:none; margin-top: 10px; }
-    .panel.active{ display:block; }
+.core { background:#1f3d36; color:#6fffdc;}
+.addon { background:#2a2f44; color:#b5c7ff;}
+.premium { background:#3a2a44; color:#f3c7ff;}
 
-    /* Add-ons path selector (General / Muslim / Parents) */
-    .pathTabs{
-      display:flex; gap:8px; flex-wrap:wrap;
-      margin-top: 10px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.12);
-      border-radius: 14px;
-      padding: 8px;
-    }
-    .pathBtn{
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      color: rgba(255,255,255,.86);
-      padding: 8px 10px;
-      border-radius: 12px;
-      cursor:pointer;
-      font-weight: 950;
-      font-size: 12px;
-    }
-    .pathBtn.active{
-      border-color: rgba(41,243,209,.55);
-      background: rgba(41,243,209,.10);
-      box-shadow: 0 0 0 2px rgba(41,243,209,.10);
-    }
-    .pathPanel{ display:none; margin-top: 10px; }
-    .pathPanel.active{ display:block; }
+details {
+  border-top:1px solid var(--border);
+  padding-top:10px;
+  margin-top:10px;
+}
 
-    /* Item list */
-    .list{
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 16px;
-      background: rgba(0,0,0,.16);
-      overflow:hidden;
-    }
-    .listHeader{
-      padding: 10px 12px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-    }
-    .listHeader .title{
-      display:flex; align-items:center; gap: 10px;
-      font-size: 13.5px; color: rgba(255,255,255,.92);
-      font-weight: 950;
-    }
-    .count{
-      font-size: 12px;
-      color: var(--muted2);
-      border: 1px solid rgba(255,255,255,.14);
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.18);
-      white-space:nowrap;
-    }
-    .items{ padding: 6px; }
+summary {
+  cursor:pointer;
+  color:var(--accent);
+  font-weight:600;
+  list-style:none;
+}
 
-    .item{
-      display:grid;
-      grid-template-columns: 18px 44px 1fr;
-      gap: 10px;
-      padding: 10px 10px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.0);
-      align-items:start;
-    }
-    .item:hover{
-      border-color: rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-    }
-    .item input{ margin-top: 3px; }
+summary::marker { display:none; }
 
-    .thumb{
-      width:44px; height:44px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      overflow:hidden;
-      display:flex; align-items:center; justify-content:center;
-      color: rgba(255,255,255,.45);
-      font-size: 11px;
-      font-weight: 900;
-    }
-    .thumb img{
-      width:100%; height:100%;
-      object-fit: cover;
-      display:block;
-    }
+.item {
+  font-size:14px;
+  margin:6px 0;
+  color:var(--text);
+}
 
-    .itemName{
-      font-size: 13px;
-      color: rgba(255,255,255,.94);
-      display:flex;
-      gap: 8px;
-      align-items:center;
-      flex-wrap:wrap;
-      line-height:1.25;
-      font-weight: 950;
-    }
-    .itemWhy{
-      font-size: 12px;
-      color: rgba(255,255,255,.62);
-      margin-top: 3px;
-      line-height:1.35;
-    }
-
-    .tag{
-      font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(41,243,209,.35);
-      background: rgba(41,243,209,.09);
-      color: rgba(255,255,255,.86);
-      white-space:nowrap;
-      font-weight: 950;
-    }
-    .tag.gray{
-      border-color: rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color: rgba(255,255,255,.76);
-    }
-    .tag.premium{
-      border-color: rgba(255,210,74,.45);
-      background: rgba(255,210,74,.10);
-      color: rgba(255,255,255,.90);
-    }
-    .tag.signature{
-      border-color: rgba(41,243,209,.55);
-      background: rgba(41,243,209,.14);
-      color: rgba(255,255,255,.92);
-    }
-
-    /* Muslim sub-branches inside Muslim path */
-    .subTabs{
-      display:flex; gap:8px; flex-wrap:wrap;
-      margin-top: 10px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.12);
-      border-radius: 14px;
-      padding: 8px;
-    }
-    .subTabBtn{
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      color: rgba(255,255,255,.86);
-      padding: 8px 10px;
-      border-radius: 12px;
-      cursor:pointer;
-      font-weight: 950;
-      font-size: 12px;
-    }
-    .subTabBtn.active{
-      border-color: rgba(41,243,209,.55);
-      background: rgba(41,243,209,.10);
-      box-shadow: 0 0 0 2px rgba(41,243,209,.10);
-    }
-    .subPanel{ display:none; margin-top: 10px; }
-    .subPanel.active{ display:block; }
-
-    @media (max-width: 980px){
-      .container{ flex-direction:column; }
-      .left{ width:100%; flex: 1; }
-      .right{ width:100%; }
-    }
-  </style>
+.small {
+  font-size:12px;
+  color:var(--muted);
+}
+</style>
 </head>
 
 <body>
-  <div class="bg" aria-hidden="true"></div>
+<div class="container">
 
-  <div class="header">
-    <div class="kicker"><span class="dot"></span> Fatirli • Smart Travel Kit Planner</div>
-    <h1>Simple core. Then pick a path: General, Muslim travel, or Parents.</h1>
-    <p class="sub">
-      This is a <b>travel quiz</b>. It gives a clean <b>6-item Core</b> that applies to almost everyone, then reveals add-ons only if they match your needs.
-    </p>
+<h1>Build your smart travel essentials kit</h1>
+<div class="subtitle">Simple first. Smart if you want more.</div>
+
+<div class="panel">
+  <label>Primary destination</label>
+  <input placeholder="Country / City"/>
+
+  <label>Trip style</label>
+  <select>
+    <option>City & sightseeing</option>
+    <option>Nature / outdoors</option>
+    <option>Beach / resort</option>
+    <option>Business / work</option>
+  </select>
+
+  <label>Trip length</label>
+  <select>
+    <option>Weekend (1–3 days)</option>
+    <option>Short (4–7 days)</option>
+    <option>Extended (8–14 days)</option>
+    <option>Long (15+ days)</option>
+  </select>
+
+  <label>
+    <input type="checkbox"/> Enable faith-friendly options (optional)
+  </label>
+
+  <button>Build my kit</button>
+</div>
+
+<div class="panel">
+  <div class="section-title">Your kit</div>
+
+  <!-- CORE -->
+  <div class="kit-section">
+    <strong>Core essentials</strong>
+
+    <div class="item">Reusable travel bottles <span class="tag core">CORE</span></div>
+    <div class="item">Expandable compressed wipes <span class="tag core">CORE</span></div>
+    <div class="item">Disposable toothbrush + toothpaste combo <span class="tag core">CORE</span></div>
+    <div class="item">24-hour deodorant wipe (single-use) <span class="tag core">CORE</span></div>
+    <div class="item">Portable bidet bottle <span class="tag core">CORE</span></div>
+    <div class="item">Wudu-friendly water spray <span class="tag core">CORE</span></div>
+    <div class="item">Sunscreen stick (TSA-safe) <span class="tag core">CORE</span></div>
   </div>
 
-  <div class="wrap">
-    <div class="container">
+  <!-- ADD ONS -->
+  <details>
+    <summary>See smart add-ons (optional)</summary>
 
-      <!-- LEFT -->
-      <div class="card left">
-        <div class="sectionTitle">
-          <h2>Your trip (fast)</h2>
-          <div class="small">Goal: 2–3 minutes</div>
-        </div>
+    <div class="item">Hydration salts packets (travel days) <span class="tag addon">ADD-ON</span></div>
+    <div class="item">Fibre / bowel-support drink sachets <span class="tag addon">ADD-ON</span></div>
+    <div class="item">Hydration face mist (climate-based) <span class="tag addon">ADD-ON</span></div>
+    <div class="item">Foldable poncho (rain & wind) <span class="tag addon">ADD-ON</span></div>
+    <div class="item">Ultra-light foldable umbrella <span class="tag addon">ADD-ON</span></div>
+    <div class="item">Make-up removal wipes <span class="tag addon">ADD-ON</span></div>
+    <div class="item">Thin water-soluble soap sheets <span class="tag addon">ADD-ON</span></div>
+    <div class="item">Powder-activated face wash sachets <span class="tag addon">ADD-ON</span></div>
+  </details>
 
-        <label>Primary country</label>
-        <input id="country1" type="text" placeholder="e.g., Japan" />
+  <!-- FAITH -->
+  <details>
+    <summary>Faith-friendly & privacy essentials</summary>
 
-        <label>Primary city (optional)</label>
-        <input id="city1" type="text" placeholder="e.g., Kyoto" />
-
-        <label>Travel start date</label>
-        <input id="startDate" type="date" />
-
-        <div class="row">
-          <div>
-            <label>Trip length</label>
-            <select id="duration">
-              <option value="weekend">Weekend (1–3 days)</option>
-              <option value="week">About a week</option>
-              <option value="twoWeeks">1–2 weeks</option>
-              <option value="long">3+ weeks</option>
-            </select>
-          </div>
-          <div>
-            <label>Climate</label>
-            <select id="climate">
-              <option value="hotHumid">Hot & humid</option>
-              <option value="hotDry">Hot & dry</option>
-              <option value="coldDry">Cold & dry</option>
-              <option value="coldWet">Cold & wet</option>
-              <option value="mixed">Mixed / unsure</option>
-            </select>
-          </div>
-        </div>
-
-        <label>Trip style (pick what fits)</label>
-        <div class="chips" id="tripStyleChips">
-          <div class="chip on" data-value="city"><span class="miniDot"></span>City</div>
-          <div class="chip" data-value="nature"><span class="miniDot"></span>Outdoors</div>
-          <div class="chip" data-value="beach"><span class="miniDot"></span>Beach</div>
-          <div class="chip" data-value="business"><span class="miniDot"></span>Business</div>
-          <div class="chip" data-value="highActivity"><span class="miniDot"></span>High activity</div>
-        </div>
-
-        <details open>
-          <summary>
-            <span>Optional modules</span>
-            <span class="badgeHint"><span class="dot" style="width:7px;height:7px"></span>Personalize</span>
-          </summary>
-          <div class="detailsBody">
-            <div class="checkrow">
-              <input id="faithOn" type="checkbox" checked />
-              <div>
-                <b>Muslim travel module</b><br/>
-                <span class="small">Unlocks Prayer + Hygiene/Wudu + Privacy/Modesty.</span>
-              </div>
-            </div>
-
-            <div class="checkrow">
-              <input id="kidsOn" type="checkbox" />
-              <div>
-                <b>Parent with kids</b><br/>
-                <span class="small">Unlocks privacy + cleanup + convenience add-ons.</span>
-              </div>
-            </div>
-
-            <div class="checkrow">
-              <input id="makeupOn" type="checkbox" />
-              <div>
-                <b>Makeup / wipe-off</b><br/>
-                <span class="small">Unlocks makeup wipes + quick skin resets.</span>
-              </div>
-            </div>
-          </div>
-        </details>
-
-        <button class="btn" id="buildBtn" type="button">Build my kit</button>
-      </div>
-
-      <!-- RIGHT -->
-      <div class="card right">
-        <div class="kitHeader">
-          <h2>Your kit</h2>
-          <div class="pill" id="kitPill">Ready</div>
-        </div>
-
-        <div class="notice">
-          <b>Reassurance:</b> Core is short on purpose. Add-ons are where you explore — only if it applies to you.
-        </div>
-
-        <div class="tabs" role="tablist" aria-label="Kit Tabs">
-          <button class="tabBtn active" data-tab="core" type="button">Core (6)</button>
-          <button class="tabBtn" data-tab="addons" type="button">Add-ons</button>
-          <button class="tabBtn" data-tab="premium" type="button">Premium</button>
-        </div>
-
-        <div id="panel-core" class="panel active"></div>
-        <div id="panel-addons" class="panel"></div>
-        <div id="panel-premium" class="panel"></div>
-      </div>
-
+    <div class="item">Foldable prayer mat / tikar <span class="tag core">CORE</span></div>
+    <div class="item">Siwak (natural oral care) <span class="tag addon">ADD-ON</span></div>
+    <div class="item">Qibla compass / card <span class="tag addon">ADD-ON</span></div>
+    <div class="item">
+      Multi-use privacy tent (prayer / baby changing / beach)
+      <span class="tag addon">ADD-ON</span>
     </div>
-  </div>
-
-<script>
-(() => {
-  const $ = (id) => document.getElementById(id);
-
-  // Trip style multi-select chips
-  function selectedTripStyles(){
-    return new Set([...document.querySelectorAll("#tripStyleChips .chip.on")].map(x => x.dataset.value));
-  }
-  $("#tripStyleChips").addEventListener("click", (e)=>{
-    const chip = e.target.closest(".chip");
-    if(!chip) return;
-    chip.classList.toggle("on");
-    render();
-  });
-
-  function state(){
-    return {
-      tripStyle: selectedTripStyles(),
-      climate: $("#climate").value,
-      duration: $("#duration").value,
-      faithOn: $("#faithOn").checked,
-      kidsOn: $("#kidsOn").checked,
-      makeupOn: $("#makeupOn").checked,
-      country: $("#country1").value.trim(),
-      city: $("#city1").value.trim()
-    };
-  }
-
-  // Item catalog (image-ready: set imgUrl later to "images/yourfile.jpg")
-  const ITEMS = [
-    // ===== CORE (exactly 6) =====
-    { id:"core_adapter", tier:"core", name:"Universal travel adapter (compact)", signature:false,
-      why:"Prevents the #1 avoidable fail: can’t charge anything.", imgUrl:"", show:s=>true, defaultOn:true },
-
-    { id:"core_powerbank", tier:"core", name:"Portable power bank (travel size)", signature:false,
-      why:"Dead phone = no maps, no bookings, no transport.", imgUrl:"", show:s=>true, defaultOn:true },
-
-    { id:"core_coinwipes", tier:"core", name:"Expandable compressed wipes (coin wipes)", signature:true,
-      why:"Tiny pack → full wipe with water. Toilets, flights, day trips.", imgUrl:"", show:s=>true, defaultOn:true },
-
-    { id:"core_disposablebrush", tier:"core", name:"Disposable toothbrush + paste combo (single-use)", signature:true,
-      why:"No sink? No problem. Zero mess, instant hygiene.", imgUrl:"", show:s=>true, defaultOn:true },
-
-    { id:"core_soapsheets", tier:"core", name:"Water-soluble soap sheets", signature:true,
-      why:"Leak-proof + TSA-proof. Clean hands anywhere.", imgUrl:"", show:s=>true, defaultOn:true },
-
-    { id:"core_sunstick", tier:"core", name:"Sunscreen stick (mess-free reapply)", signature:true,
-      why:"People skip reapply because it’s annoying—stick fixes that.", imgUrl:"",
-      show:s => s.tripStyle.has("beach") || s.tripStyle.has("city") || s.climate.startsWith("hot"), defaultOn:true },
-
-    // ===== ADD-ONS (General) =====
-    { id:"g_chewable", tier:"addon", path:"general", name:"Chewable toothpaste tablets", signature:true,
-      why:"No liquids, no spills. Great backup even if you pack paste.", imgUrl:"", show:s=>true, defaultOn:false },
-
-    { id:"g_deowipes", tier:"addon", path:"general", name:"Single-use deodorant wipes", signature:true,
-      why:"Heat + long days + no shower = instant save.", imgUrl:"", show:s=>true, defaultOn:false },
-
-    { id:"g_umbrella", tier:"addon", path:"general", name:"Mini foldable umbrella", signature:false,
-      why:"Rain + harsh sun. Simple ‘regret prevention’.", imgUrl:"",
-      show:s => s.tripStyle.has("city") || s.climate==="coldWet" || s.climate.startsWith("hot"), defaultOn:false },
-
-    { id:"g_poncho", tier:"addon", path:"general", name:"Lightweight foldable poncho", signature:false,
-      why:"Rain hits fast—poncho prevents soaked clothes days.", imgUrl:"",
-      show:s => s.climate==="coldWet" || s.tripStyle.has("nature"), defaultOn:false },
-
-    { id:"g_electrolytes", tier:"addon", path:"general", name:"Electrolyte sachets (hydration salts)", signature:true,
-      why:"Heat/high activity fatigue—this prevents the spiral.", imgUrl:"",
-      show:s => s.tripStyle.has("highActivity") || s.tripStyle.has("nature") || s.climate.startsWith("hot"), defaultOn:false },
-
-    { id:"g_fibre", tier:"addon", path:"general", name:"Fibre drink packets (travel bowel support)", signature:true,
-      why:"Long trips mess routines—packets keep it stable.", imgUrl:"",
-      show:s => s.duration==="twoWeeks" || s.duration==="long", defaultOn:false },
-
-    { id:"g_powderwash", tier:"addon", path:"general", name:"Powder-activated face wash sachets", signature:true,
-      why:"Proper cleansing without carrying liquid bottles.", imgUrl:"", show:s=>true, defaultOn:false },
-
-    { id:"g_makeupwipes", tier:"addon", path:"general", name:"Makeup remover wipes (travel pack)", signature:false,
-      why:"Exhausted? Wipes = you still remove makeup properly.", imgUrl:"",
-      show:s => s.makeupOn, defaultOn:s=>!!s.makeupOn },
-
-    // ===== ADD-ONS (Muslim travel) — 3 branches =====
-    // Prayer
-    { id:"m_prayermat", tier:"addon", path:"muslim", branch:"Prayer", name:"Packable prayer mat / tikar (thin)", signature:false,
-      why:"Core prayer item that’s actually easy to carry.", imgUrl:"", show:s=>s.faithOn, defaultOn:true },
-
-    { id:"m_qibla", tier:"addon", path:"muslim", branch:"Prayer", name:"Qibla card / compass", signature:true,
-      why:"Fast direction check anywhere. Removes friction.", imgUrl:"", show:s=>s.faithOn, defaultOn:false },
-
-    { id:"m_songkok", tier:"addon", path:"muslim", branch:"Prayer", name:"Foldable songkok (travel)", signature:true,
-      why:"Optional prayer comfort without bulk.", imgUrl:"", show:s=>s.faithOn, defaultOn:false },
-
-    { id:"m_telekung", tier:"addon", path:"muslim", branch:"Prayer", name:"Purse-size telekung travel set", signature:true,
-      why:"Women’s prayer option that fits in a handbag.", imgUrl:"", show:s=>s.faithOn, defaultOn:false },
-
-    // Hygiene & Wudu
-    { id:"m_wudubottle", tier:"addon", path:"muslim", branch:"Hygiene/Wudu", name:"Wudu spray / travel wudu bottle", signature:false,
-      why:"Makes wudu workable in awkward sinks & small toilets.", imgUrl:"", show:s=>s.faithOn, defaultOn:true },
-
-    { id:"m_bidet", tier:"addon", path:"muslim", branch:"Hygiene/Wudu", name:"Portable bidet / rinse bottle (compact)", signature:true,
-      why:"Cleaner routine; useful beyond faith too.", imgUrl:"", show:s=>s.faithOn, defaultOn:true },
-
-    { id:"m_siwak", tier:"addon", path:"muslim", branch:"Hygiene/Wudu", name:"Pocket siwak (miswak)", signature:true,
-      why:"Low-bulk refresh on the go.", imgUrl:"", show:s=>s.faithOn, defaultOn:false },
-
-    // Privacy & Modesty (multi-use hook!)
-    { id:"m_privacytent", tier:"addon", path:"muslim", branch:"Privacy/Modesty", name:"Mini privacy tent (prayer / beach / kids / camping)", signature:true,
-      why:"One item, multiple use cases = high perceived value.", imgUrl:"",
-      show:s => s.faithOn || s.kidsOn || s.tripStyle.has("beach") || s.tripStyle.has("nature"), defaultOn:false },
-
-    { id:"m_miniprayertent", tier:"addon", path:"muslim", branch:"Privacy/Modesty", name:"Mini prayer tent (privacy upgrade)", signature:true,
-      why:"Optional coverage in crowded areas—kept as add-on.", imgUrl:"",
-      show:s => s.faithOn, defaultOn:false },
-
-    // ===== ADD-ONS (Parents) =====
-    { id:"p_cleanup", tier:"addon", path:"parents", name:"Extra cleanup wipes (kids / spills)", signature:false,
-      why:"Parents know: mess happens instantly. This prevents panic.", imgUrl:"",
-      show:s => s.kidsOn, defaultOn:true },
-
-    { id:"p_privacytent", tier:"addon", path:"parents", name:"Privacy tent (kid changing / beach / emergencies)", signature:true,
-      why:"The ‘why didn’t I bring this?’ parent item.", imgUrl:"",
-      show:s => s.kidsOn, defaultOn:false },
-
-    // ===== PREMIUM =====
-    { id:"pr_collagen", tier:"premium", name:"Hydration collagen face packets (tear + apply)", signature:true,
-      why:"Plane/hotel quick skin reset. Premium feel, optional.", imgUrl:"",
-      show:s => s.climate==="coldDry" || s.climate==="hotDry" || s.duration!=="weekend", defaultOn:false },
-
-    { id:"pr_device", tier:"premium", name:"Travel-size skin booster device (portable beauty tool)", signature:false,
-      why:"Premium add-on for ‘tools people’ only—kept optional.", imgUrl:"",
-      show:s => s.duration==="long" || s.tripStyle.has("business"), defaultOn:false }
-  ];
-
-  const overrides = new Map(); // id -> bool
-  const isOn = (it, st) => overrides.has(it.id) ? overrides.get(it.id) : (typeof it.defaultOn==="function" ? !!it.defaultOn(st) : !!it.defaultOn);
-
-  function tagsFor(it){
-    const tags = [];
-    if(it.tier==="core") tags.push({cls:"tag gray", text:"CORE"});
-    if(it.tier==="addon") tags.push({cls:"tag gray", text:"ADD-ON"});
-    if(it.tier==="premium") tags.push({cls:"tag premium", text:"PREMIUM"});
-    if(it.signature) tags.push({cls:"tag signature", text:"Fatirli signature pick"});
-    return tags;
-  }
-
-  function itemRow(it, st){
-    const row = document.createElement("div");
-    row.className = "item";
-
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.checked = isOn(it, st);
-    cb.addEventListener("change", ()=> overrides.set(it.id, cb.checked));
-
-    const thumb = document.createElement("div");
-    thumb.className = "thumb";
-    if(it.imgUrl){
-      const img = document.createElement("img");
-      img.alt = it.name;
-      img.src = it.imgUrl;
-      thumb.appendChild(img);
-    } else {
-      thumb.textContent = "IMG";
-    }
-
-    const main = document.createElement("div");
-    const name = document.createElement("div");
-    name.className = "itemName";
-    name.textContent = it.name;
-
-    tagsFor(it).forEach(t=>{
-      const span = document.createElement("span");
-      span.className = t.cls;
-      span.textContent = t.text;
-      name.appendChild(span);
-    });
-
-    const why = document.createElement("div");
-    why.className = "itemWhy";
-    why.textContent = it.why;
-
-    main.appendChild(name);
-    main.appendChild(why);
-
-    row.appendChild(cb);
-    row.appendChild(thumb);
-    row.appendChild(main);
-    return row;
-  }
-
-  function listBlock(title, rightText, rows){
-    const box = document.createElement("div");
-    box.className = "list";
-
-    const head = document.createElement("div");
-    head.className = "listHeader";
-    head.innerHTML = `
-      <div class="title">${title}</div>
-      <div class="count">${rightText}</div>
-    `;
-
-    const body = document.createElement("div");
-    body.className = "items";
-    rows.forEach(r => body.appendChild(r));
-
-    box.appendChild(head);
-    box.appendChild(body);
-    return box;
-  }
-
-  // Top tabs: core/addons/premium
-  function setTab(name){
-    document.querySelectorAll(".tabBtn").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
-    document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === `panel-${name}`));
-  }
-  document.querySelectorAll(".tabBtn").forEach(btn => btn.addEventListener("click", ()=> setTab(btn.dataset.tab)));
-
-  // Add-ons path tabs
-  function setPath(container, pathName){
-    container.querySelectorAll(".pathBtn").forEach(b => b.classList.toggle("active", b.dataset.path === pathName));
-    container.querySelectorAll(".pathPanel").forEach(p => p.classList.toggle("active", p.dataset.path === pathName));
-  }
-
-  function kitPillText(st){
-    const parts = [];
-    parts.push(st.country ? st.country : "No country");
-    if(st.city) parts.push(st.city);
-    parts.push(st.faithOn ? "Muslim: ON" : "Muslim: OFF");
-    parts.push(st.kidsOn ? "Kids: ON" : "Kids: OFF");
-    return parts.join(" • ");
-  }
-
-  function render(){
-    const st = state();
-    $("#kitPill").textContent = kitPillText(st);
-
-    // Panels
-    const corePanel = $("#panel-core");
-    const addonsPanel = $("#panel-addons");
-    const premiumPanel = $("#panel-premium");
-    corePanel.innerHTML = "";
-    addonsPanel.innerHTML = "";
-    premiumPanel.innerHTML = "";
-
-    const visible = ITEMS.filter(it => it.show(st));
-
-    // CORE — exactly 6
-    const coreItems = visible.filter(it => it.tier==="core").slice(0,6);
-    corePanel.appendChild(listBlock("Core kit (6 essentials)", "6 items", coreItems.map(it => itemRow(it, st))));
-    const coreNote = document.createElement("div");
-    coreNote.className = "notice";
-    coreNote.innerHTML = `<b>Soft end:</b> Core is ready. If you want Muslim travel or Parent travel logic, open Add-ons.`;
-    corePanel.appendChild(coreNote);
-
-    // PREMIUM
-    const prem = visible.filter(it => it.tier==="premium");
-    premiumPanel.appendChild(listBlock("Premium (optional upsells)", `${prem.length} options`, prem.map(it => itemRow(it, st))));
-
-    // ADD-ONS (paths)
-    const pathWrap = document.createElement("div");
-
-    const pathTabs = document.createElement("div");
-    pathTabs.className = "pathTabs";
-    pathTabs.innerHTML = `
-      <button class="pathBtn active" data-path="general" type="button">General</button>
-      <button class="pathBtn" data-path="muslim" type="button">Muslim travel</button>
-      <button class="pathBtn" data-path="parents" type="button">Parents</button>
-    `;
-    pathWrap.appendChild(pathTabs);
-
-    const panelGeneral = document.createElement("div");
-    panelGeneral.className = "pathPanel active";
-    panelGeneral.dataset.path = "general";
-
-    const panelMuslim = document.createElement("div");
-    panelMuslim.className = "pathPanel";
-    panelMuslim.dataset.path = "muslim";
-
-    const panelParents = document.createElement("div");
-    panelParents.className = "pathPanel";
-    panelParents.dataset.path = "parents";
-
-    // General add-ons
-    const gen = visible.filter(it => it.tier==="addon" && it.path==="general");
-    panelGeneral.appendChild(listBlock("General add-ons (only if you want more)", `${gen.length} options`, gen.map(it => itemRow(it, st))));
-
-    // Parents add-ons
-    if(!st.kidsOn){
-      const n = document.createElement("div");
-      n.className = "notice";
-      n.innerHTML = `<b>Parents module is OFF.</b> Turn on “Parent with kids” on the left to unlock parent add-ons.`;
-      panelParents.appendChild(n);
-    } else {
-      const parents = visible.filter(it => it.tier==="addon" && it.path==="parents");
-      panelParents.appendChild(listBlock("Parents add-ons", `${parents.length} options`, parents.map(it => itemRow(it, st))));
-    }
-
-    // Muslim add-ons (3 sub-branches)
-    if(!st.faithOn){
-      const n = document.createElement("div");
-      n.className = "notice";
-      n.innerHTML = `<b>Muslim travel module is OFF.</b> Turn it on (left) to unlock Prayer + Hygiene/Wudu + Privacy/Modesty.`;
-      panelMuslim.appendChild(n);
-    } else {
-      const muslimItems = visible.filter(it => it.tier==="addon" && it.path==="muslim");
-
-      const subTabs = document.createElement("div");
-      subTabs.className = "subTabs";
-      subTabs.innerHTML = `
-        <button class="subTabBtn active" data-branch="Prayer" type="button">Prayer</button>
-        <button class="subTabBtn" data-branch="Hygiene/Wudu" type="button">Hygiene & Wudu</button>
-        <button class="subTabBtn" data-branch="Privacy/Modesty" type="button">Privacy & Modesty</button>
-      `;
-      panelMuslim.appendChild(subTabs);
-
-      const subPrayer = document.createElement("div");
-      subPrayer.className = "subPanel active";
-      const subWudu = document.createElement("div");
-      subWudu.className = "subPanel";
-      const subPrivacy = document.createElement("div");
-      subPrivacy.className = "subPanel";
-
-      const prayer = muslimItems.filter(x => x.branch==="Prayer");
-      const wudu = muslimItems.filter(x => x.branch==="Hygiene/Wudu");
-      const privacy = muslimItems.filter(x => x.branch==="Privacy/Modesty");
-
-      subPrayer.appendChild(listBlock("Prayer branch", `${prayer.length} options`, prayer.map(it => itemRow(it, st))));
-      subWudu.appendChild(listBlock("Hygiene & Wudu branch", `${wudu.length} options`, wudu.map(it => itemRow(it, st))));
-      subPrivacy.appendChild(listBlock("Privacy & Modesty branch", `${privacy.length} options`, privacy.map(it => itemRow(it, st))));
-
-      panelMuslim.appendChild(subPrayer);
-      panelMuslim.appendChild(subWudu);
-      panelMuslim.appendChild(subPrivacy);
-
-      // subtab click
-      subTabs.querySelectorAll(".subTabBtn").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          subTabs.querySelectorAll(".subTabBtn").forEach(b=>b.classList.toggle("active", b===btn));
-          const br = btn.dataset.branch;
-          subPrayer.classList.toggle("active", br==="Prayer");
-          subWudu.classList.toggle("active", br==="Hygiene/Wudu");
-          subPrivacy.classList.toggle("active", br==="Privacy/Modesty");
-        });
-      });
-    }
-
-    pathWrap.appendChild(panelGeneral);
-    pathWrap.appendChild(panelMuslim);
-    pathWrap.appendChild(panelParents);
-
-    // path clicks
-    pathTabs.querySelectorAll(".pathBtn").forEach(btn=>{
-      btn.addEventListener("click", ()=> setPath(pathWrap, btn.dataset.path));
-    });
-
-    addonsPanel.appendChild(pathWrap);
-  }
-
-  // Live re-render
-  ["climate","duration","faithOn","kidsOn","makeupOn"].forEach(id => $(id).addEventListener("change", render));
-  $("#buildBtn").addEventListener("click", render);
-
-  render();
-})();
-</script>
+    <div class="item">Foldable songkok <span class="tag addon">ADD-ON</span></div>
+    <div class="item">Compact telekung travel pouch <span class="tag addon">ADD-ON</span></div>
+  </details>
+
+  <!-- PREMIUM -->
+  <details>
+    <summary>Premium upgrades (Fatirli signature)</summary>
+
+    <div class="item">
+      Travel-size skin booster device
+      <span class="tag premium">PREMIUM · Fatirli Pick</span>
+      <div class="small">For long-haul flights, dry cabins & skin recovery</div>
+    </div>
+
+    <div class="item">
+      Collagen hydration tear-off packets (drink or topical)
+      <span class="tag premium">PREMIUM · Fatirli Pick</span>
+    </div>
+  </details>
+
+  <details>
+    <summary>Want to refine this?</summary>
+    <div class="small">
+      You can optimise for lighter packing, higher comfort, or faith-first travel next.
+    </div>
+  </details>
+
+</div>
+
+</div>
 </body>
 </html>
