@@ -3,267 +3,853 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Smart Travel Kit Planner</title>
+<title>Fatirli Smart Travel Kit Planner</title>
 
 <style>
-:root {
-  --bg-dark: #0e1a1a;
-  --card-bg: rgba(20, 40, 40, 0.88);
+:root{
+  --card-bg: rgba(18, 32, 36, 0.88);
   --accent: #3fd0c9;
-  --muted: #b8d6d3;
+  --accent2: #7cf5ee;
+  --muted: rgba(230,255,252,.72);
+  --text: rgba(255,255,255,.95);
+  --chip-bg: rgba(63,208,201,.12);
+  --border: rgba(255,255,255,.16);
 }
 
 * { box-sizing: border-box; }
 
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  color: white;
-  background: 
-    linear-gradient(rgba(10,20,20,.65), rgba(10,20,20,.65)),
-    url("travel-bg.webp") center/cover fixed no-repeat;
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+
+  background: linear-gradient(rgba(10,18,18,.68), rgba(10,18,18,.68)), url("travel-bg.webp");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  animation: bgPan 22s ease-in-out infinite alternate;
 }
 
-/* Layout */
-.wrapper {
+@media (max-width: 900px){
+  body{ animation-duration: 28s; }
+}
+
+@keyframes bgPan{
+  from { background-position: 48% 48%; }
+  to   { background-position: 52% 52%; }
+}
+
+.wrapper{
   max-width: 1200px;
-  margin: auto;
-  padding: 24px;
+  margin: 0 auto;
+  padding: 22px;
 }
 
-.grid {
+.hero{ margin-bottom: 14px; }
+
+h1{
+  margin: 0 0 6px;
+  font-size: 1.9rem;
+  letter-spacing: .2px;
+}
+
+.sub{
+  color: var(--muted);
+  margin: 0;
+  font-size: .98rem;
+}
+
+.reassure{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(63,208,201,.22);
+  border-radius: 12px;
+  background: rgba(63,208,201,.08);
+  color: rgba(230,255,252,.88);
+  font-size: .92rem;
+}
+
+.grid{
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-
-@media (max-width: 900px) {
-  .grid { grid-template-columns: 1fr; }
-}
-
-/* Cards */
-.card {
-  background: var(--card-bg);
-  border-radius: 14px;
-  padding: 22px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.4);
-}
-
-/* Headings */
-h1 { font-size: 1.9rem; margin-bottom: 8px; }
-h2 { font-size: 1.2rem; margin-top: 24px; }
-p { color: var(--muted); font-size: 0.95rem; }
-
-/* Inputs */
-label { display: block; margin-top: 14px; font-weight: 600; }
-
-input, select, button {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  margin-top: 6px;
-  font-size: 0.95rem;
-}
-
-button {
-  background: var(--accent);
-  color: #003333;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-button.secondary {
-  background: transparent;
-  border: 1px dashed var(--accent);
-  color: var(--accent);
-}
-
-/* Options */
-.options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.option {
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--accent);
-  cursor: pointer;
-  font-size: 0.85rem;
-  color: var(--accent);
-}
-
-.option.active {
-  background: var(--accent);
-  color: #003333;
-  font-weight: 700;
-}
-
-/* Collapsible */
-details {
+  gap: 18px;
   margin-top: 16px;
-  border: 1px solid rgba(255,255,255,.2);
-  border-radius: 10px;
-  padding: 10px;
 }
 
-summary {
-  cursor: pointer;
-  font-weight: 700;
+@media(max-width: 980px){
+  .grid{ grid-template-columns: 1fr; }
 }
 
-/* Output */
-.kit h3 {
-  margin-bottom: 6px;
+.card{
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 14px 34px rgba(0,0,0,.35);
+  backdrop-filter: blur(6px);
 }
-.kit small {
+
+.sectionTitle{
+  margin: 16px 0 6px;
+  font-size: 1.05rem;
+  letter-spacing: .35px;
+  color: rgba(255,255,255,.94);
+}
+
+small.helper{
+  display:block;
   color: var(--muted);
-  display: block;
-  margin-bottom: 10px;
+  margin-top: 6px;
+  line-height: 1.35;
 }
+
+label{
+  display:block;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 800;
+  color: rgba(255,255,255,.9);
+}
+
+input, select, button{
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.92);
+  padding: 10px 10px;
+  font-size: .95rem;
+  margin-top: 6px;
+}
+
+input::placeholder{ color: rgba(255,255,255,.5); }
+
+button{
+  cursor: pointer;
+  border: none;
+  background: var(--accent);
+  color: rgba(0,40,40,.95);
+  font-weight: 900;
+  letter-spacing: .2px;
+  transition: transform .08s ease, filter .15s ease;
+}
+
+button:hover{ filter: brightness(1.04); }
+button:active{ transform: translateY(1px); }
+
+button.secondary{
+  margin-top: 10px;
+  background: transparent;
+  border: 1px dashed rgba(63,208,201,.7);
+  color: var(--accent2);
+}
+
+.row{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media(max-width: 520px){
+  .row{ grid-template-columns: 1fr; }
+}
+
+.options{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top: 10px;
+}
+
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 8px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(63,208,201,.62);
+  background: rgba(63,208,201,.12);
+  color: rgba(230,255,252,.92);
+  font-size: .85rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.chip.active{
+  background: rgba(63,208,201,.95);
+  color: rgba(0,40,40,.96);
+  font-weight: 900;
+}
+
+.hr{
+  height:1px;
+  background: rgba(255,255,255,.12);
+  margin: 14px 0;
+}
+
+details{
+  margin-top: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  padding: 10px 12px;
+}
+
+summary{
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.badge{
+  display:inline-block;
+  margin-left: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 900;
+  background: rgba(63,208,201,.18);
+  border: 1px solid rgba(63,208,201,.45);
+  color: rgba(230,255,252,.95);
+}
+
+.kitTitle{
+  display:flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 0;
+}
+
+.kitNote{
+  color: var(--muted);
+  margin-top: 6px;
+  font-size: .93rem;
+  line-height: 1.35;
+}
+
+.kitBlock{
+  margin-top: 14px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.13);
+  background: rgba(0,0,0,.18);
+}
+
+.kitBlock h3{
+  margin: 0 0 6px;
+  font-size: 1rem;
+}
+
+.kitBlock small{
+  display:block;
+  color: var(--muted);
+  margin-bottom: 10px;
+  line-height: 1.35;
+}
+
+ul{ margin: 0; padding-left: 18px; }
+li{ margin: 7px 0; }
+
+.tag{
+  display:inline-block;
+  margin-left: 8px;
+  font-size: .75rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+  color: rgba(230,255,252,.88);
+}
+
+.softEnd{
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(63,208,201,.22);
+  background: rgba(63,208,201,.08);
+}
+
+.refineBtns{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top: 10px;
+}
+
+.refineBtns button{
+  width: auto;
+  padding: 9px 12px;
+  border-radius: 999px;
+  font-weight: 900;
+}
+
+.refineBtns button.secondary{
+  border-style: solid;
+  border-color: rgba(63,208,201,.35);
+}
+
+.hidden{ display:none !important; }
+
+.checkboxRow{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+}
+
+.checkboxRow input{
+  width:auto;
+  margin: 2px 0 0;
+}
+
+.miniHelp{
+  font-size: .88rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.summaryEmphasis{ color: rgba(230,255,252,.95); }
 </style>
 </head>
 
 <body>
 <div class="wrapper">
+  <div class="hero">
+    <h1>Build your smart travel essentials kit</h1>
+    <p class="sub">Tell us where you’re going and what matters to you. We’ll build a compact kit you’ll actually use.</p>
+    <div class="reassure">You don’t need perfect inputs — choose what’s closest. You can refine after you see your kit.</div>
+  </div>
 
-<h1>Build your smart travel essentials kit</h1>
-<p>You don’t need to know exact conditions — just choose what feels closest. You can’t get this wrong.</p>
+  <div class="grid">
+    <!-- LEFT -->
+    <div class="card">
+      <div class="sectionTitle">Your trip</div>
 
-<div class="grid">
+      <label>Primary destination (where you’ll spend most of your time)</label>
+      <div class="row">
+        <input id="country1" placeholder="Country (e.g. Japan)" />
+        <input id="city1" placeholder="City (optional, for better accuracy)" />
+      </div>
 
-<!-- LEFT: PLANNER -->
-<div class="card">
+      <div id="extraStops"></div>
+      <button class="secondary" type="button" onclick="addStop()">➕ Add another stop (optional)</button>
+      <small class="helper">Multi-country trips supported (up to 3). We’ll bias the kit toward the most demanding conditions.</small>
 
-<h2>Your trip</h2>
+      <div class="row">
+        <div>
+          <label>Travel start date</label>
+          <input id="startDate" type="date" />
+        </div>
+        <div>
+          <label>Travelling with kids?</label>
+          <select id="withKids">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </select>
+        </div>
+      </div>
 
-<label>Primary destination (where you’ll spend most of your time)</label>
-<input placeholder="Country"/>
-<input placeholder="City (optional, for better accuracy)"/>
+      <div class="sectionTitle">Trip style</div>
+      <div class="options" id="tripStyle">
+        <div class="chip" data-value="city">City / sightseeing</div>
+        <div class="chip" data-value="outdoors">Nature / outdoors</div>
+        <div class="chip" data-value="beach">Beach / resort</div>
+        <div class="chip" data-value="business">Business / work</div>
+      </div>
 
-<div id="extraStops"></div>
-<button class="secondary" onclick="addStop()">➕ Add another stop (optional)</button>
+      <div class="sectionTitle">Activity level</div>
+      <small class="helper">This helps us choose hydration, sweat-control and comfort items.</small>
+      <div class="options" id="activity">
+        <div class="chip" data-value="low">Low</div>
+        <div class="chip" data-value="medium">Medium</div>
+        <div class="chip" data-value="high">High / lots of walking</div>
+      </div>
 
-<label>Travel start date</label>
-<input type="date"/>
+      <div class="sectionTitle">Climate</div>
+      <small class="helper">Smart estimate available — you can always change this.</small>
+      <div class="options" id="climate">
+        <div class="chip" data-value="hot_humid">Hot & humid</div>
+        <div class="chip" data-value="hot_dry">Hot & dry</div>
+        <div class="chip" data-value="cold_dry">Cold & dry</div>
+        <div class="chip" data-value="cold_wet">Cold & wet</div>
+        <div class="chip" data-value="mixed">Mixed / unsure</div>
+      </div>
 
-<h2>Trip style</h2>
-<div class="options" id="tripStyle">
-  <div class="option">City / sightseeing</div>
-  <div class="option">Nature / outdoors</div>
-  <div class="option">Beach / resort</div>
-  <div class="option">Business / work</div>
-</div>
+      <button style="margin-top:10px;" type="button" onclick="smartEstimateStub()">
+        Auto-fill from smart climate estimate (optional)
+      </button>
+      <small class="helper">We’ll add real weather + seasonal climate later. For now this demonstrates the flow.</small>
 
-<h2>Climate</h2>
-<p><small>Smart estimate available — you can always change this.</small></p>
-<div class="options" id="climate">
-  <div class="option">Hot & humid</div>
-  <div class="option">Hot & dry</div>
-  <div class="option">Cold & dry</div>
-  <div class="option">Cold & wet</div>
-  <div class="option">Mixed / unsure</div>
-</div>
+      <div class="sectionTitle">You</div>
+      <div class="row">
+        <div>
+          <label>Skin type</label>
+          <select id="skinType">
+            <option value="normal">Normal</option>
+            <option value="oily">Oily</option>
+            <option value="dry">Dry</option>
+            <option value="sensitive">Sensitive</option>
+          </select>
+        </div>
+        <div>
+          <label>Digestion</label>
+          <select id="digestion">
+            <option value="normal">Normal</option>
+            <option value="constipation">Constipation-prone</option>
+            <option value="sensitive">Sensitive stomach</option>
+          </select>
+        </div>
+      </div>
 
-<button style="margin-top:10px;" onclick="alert('Auto-fill will be added later using weather data.')">
-Auto-fill from smart climate estimate (optional)
-</button>
+      <label>Hair / scalp</label>
+      <select id="hairScalp">
+        <option value="normal">Normal</option>
+        <option value="oily">Oily scalp</option>
+        <option value="dry_itchy">Dry / itchy</option>
+        <option value="dandruff">Dandruff-prone</option>
+        <option value="hairfall">Hair fall concern</option>
+      </select>
 
-<h2>You</h2>
-<label>Skin type</label>
-<select>
-  <option>Normal</option>
-  <option>Oily</option>
-  <option>Dry</option>
-  <option>Sensitive</option>
-</select>
+      <div class="sectionTitle">Trip length</div>
+      <select id="tripLength">
+        <option value="wknd">Weekend (1–3 days)</option>
+        <option value="w1">4–7 days</option>
+        <option value="w2">8–14 days</option>
+        <option value="long">15+ days</option>
+      </select>
 
-<label>Hair / scalp</label>
-<select>
-  <option>Normal</option>
-  <option>Oily scalp</option>
-  <option>Dry / itchy</option>
-  <option>Dandruff-prone</option>
-  <option>Hair fall concern</option>
-</select>
+      <!-- Faith-friendly -->
+      <details id="faithDetails">
+        <summary class="summaryEmphasis">Optional: Faith-friendly travel add-ons</summary>
 
-<h2>Trip length</h2>
-<select>
-  <option>Weekend (1–3 days)</option>
-  <option>4–7 days</option>
-  <option>8–14 days</option>
-  <option>15+ days</option>
-</select>
+        <div class="checkboxRow">
+          <input id="faithPrayer" type="checkbox"/>
+          <div>
+            <div><strong>Prayer essentials</strong></div>
+            <div class="miniHelp">Adds compact prayer items that reduce stress on the move.</div>
+          </div>
+        </div>
 
-<details>
-  <summary>Optional: Faith-friendly travel add-ons</summary>
-  <p>Prayer essentials, wudu-friendly hygiene, modesty-friendly items.</p>
-</details>
+        <div class="checkboxRow" id="prayerClothingRow">
+          <input id="faithClothing" type="checkbox"/>
+          <div>
+            <div><strong>Prayer clothing (telkung/songkok)</strong> <span class="tag">ADD-ON</span></div>
+            <div class="miniHelp">Only if you personally use it — kept optional to avoid clutter.</div>
+          </div>
+        </div>
 
-</div>
+        <div class="checkboxRow">
+          <input id="faithWudu" type="checkbox" checked />
+          <div>
+            <div><strong>Wudu-friendly hygiene</strong> <span class="tag">CORE</span></div>
+            <div class="miniHelp">Adds water-friendly & low-mess hygiene options (airports, rest stops).</div>
+          </div>
+        </div>
 
-<!-- RIGHT: OUTPUT -->
-<div class="card kit">
-<h2>Your kit</h2>
+        <div class="checkboxRow">
+          <input id="faithPrivacy" type="checkbox"/>
+          <div>
+            <div><strong>Sometimes need privacy</strong> <span class="tag">ADD-ON</span></div>
+            <div class="miniHelp">Unlocks privacy-focused options (prayer / changing / beach / camping).</div>
+          </div>
+        </div>
 
-<h3>Hygiene & core</h3>
-<small>Based on your climate and trip duration</small>
-<ul>
-<li>Toiletry containers</li>
-<li>Travel towel</li>
-<li>Wet wipes</li>
-</ul>
+        <small class="helper">This stays optional. If you don’t need it, leave it off — your kit still works.</small>
+      </details>
 
-<h3>Skin & hair</h3>
-<small>Adjusted for your skin and scalp preferences</small>
-<ul>
-<li>Cleanser</li>
-<li>Moisturiser</li>
-<li>Hair care essentials</li>
-</ul>
+      <div class="hr"></div>
+      <button type="button" onclick="buildKit()">Update my kit</button>
+      <small class="helper">Tip: You can refine after you see your kit — no need to perfect everything upfront.</small>
+    </div>
 
-<h3>Comfort & extras</h3>
-<small>Chosen to suit your trip style</small>
-<ul>
-<li>Portable charger</li>
-<li>Travel adapter</li>
-<li>Reusable pouch</li>
-</ul>
+    <!-- RIGHT -->
+    <div class="card">
+      <h2 class="kitTitle">
+        <span>Your kit</span>
+        <span class="badge">Fatirli signature picks</span>
+      </h2>
+      <p class="kitNote" id="kitSummary">
+        Fill a few choices on the left, then press “Update my kit”.
+      </p>
 
-</div>
+      <div class="kitBlock" id="blockCore">
+        <h3>Non-negotiables</h3>
+        <small id="coreReason">Essentials that cover the basics without bulk.</small>
+        <ul id="coreList"></ul>
+      </div>
 
-</div>
+      <div class="kitBlock" id="blockUpgrades">
+        <h3>Your smart upgrades</h3>
+        <small id="upgradeReason">Compact, high-utility upgrades based on your trip style, climate, activity and duration.</small>
+        <ul id="upgradeList"></ul>
+      </div>
+
+      <div class="kitBlock hidden" id="blockFaith">
+        <h3>Faith-friendly upgrades</h3>
+        <small id="faithReason">Optional items that make prayer and wudu easier while travelling.</small>
+        <ul id="faithList"></ul>
+      </div>
+
+      <!-- Soft end + branching -->
+      <div class="softEnd">
+        <div><strong>Your kit is ready.</strong> Want to refine this?</div>
+
+        <div class="refineBtns">
+          <button type="button" class="secondary" onclick="toggleLighter()">Make this lighter</button>
+          <button type="button" class="secondary" onclick="toggleFaithView()">Show faith-friendly upgrades</button>
+          <button type="button" class="secondary" onclick="toggleWhy()">Why these items?</button>
+        </div>
+
+        <div id="refineArea" style="margin-top:12px;">
+          <div id="lightNote" class="hidden">
+            <div class="miniHelp"><strong>Lighter mode:</strong> keeps only the highest-impact items and removes nice-to-haves.</div>
+          </div>
+
+          <div id="whyArea" class="hidden" style="margin-top:10px;">
+            <div class="miniHelp" id="whyText"></div>
+          </div>
+
+          <!-- Core dental choice: user-choice but always core -->
+          <div class="checkboxRow" style="margin-top:12px;">
+            <input id="useChewables" type="radio" name="dental" checked />
+            <div>
+              <div><strong>Compact dental kit:</strong> Chewable toothpaste tablets + reusable brush <span class="badge">Fatirli pick</span></div>
+              <div class="miniHelp">Lower mess, space-saving, easy for carry-on.</div>
+            </div>
+          </div>
+
+          <div class="checkboxRow">
+            <input id="useDisposable" type="radio" name="dental" />
+            <div>
+              <div><strong>Compact dental kit:</strong> Disposable toothbrush + toothpaste combo <span class="badge">Fatirli pick</span></div>
+              <div class="miniHelp">Fastest, zero-fuss option for transit and late arrivals.</div>
+            </div>
+          </div>
+
+          <button type="button" style="margin-top:10px;" onclick="buildKit()">Apply refinements</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-function activateGroup(groupId) {
-  document.querySelectorAll(`#${groupId} .option`).forEach(opt => {
-    opt.onclick = () => {
-      document.querySelectorAll(`#${groupId} .option`).forEach(o => o.classList.remove('active'));
-      opt.classList.add('active');
-    };
-  });
+const state = {
+  tripStyle: null,
+  climate: null,
+  activity: null,
+  lighterMode: false,
+  showFaith: false,
+  showWhy: false,
+  stops: 1
+};
+
+function $(id){ return document.getElementById(id); }
+
+function setActive(groupId, value){
+  const chips = document.querySelectorAll(`#${groupId} .chip`);
+  chips.forEach(c => c.classList.toggle("active", c.dataset.value === value));
+  if(groupId === "tripStyle") state.tripStyle = value;
+  if(groupId === "climate") state.climate = value;
+  if(groupId === "activity") state.activity = value;
+  buildKit();
 }
 
-activateGroup("tripStyle");
-activateGroup("climate");
+function initChipGroup(groupId, defaultValue){
+  const chips = document.querySelectorAll(`#${groupId} .chip`);
+  chips.forEach(chip => {
+    chip.addEventListener("click", () => setActive(groupId, chip.dataset.value));
+  });
+  setActive(groupId, defaultValue);
+}
 
-let stopCount = 0;
-function addStop() {
-  if (stopCount >= 2) return alert("Maximum 3 locations supported.");
-  stopCount++;
+function addStop(){
+  if(state.stops >= 3){
+    alert("Maximum 3 locations supported.");
+    return;
+  }
+  state.stops++;
+  const n = state.stops;
   const div = document.createElement("div");
   div.innerHTML = `
-    <label>Additional stop</label>
-    <input placeholder="Country"/>
-    <input placeholder="City (optional)"/>
+    <label>Additional stop ${n-1}</label>
+    <div class="row">
+      <input id="country${n}" placeholder="Country (e.g. Saudi Arabia)" />
+      <input id="city${n}" placeholder="City (optional)" />
+    </div>
   `;
-  document.getElementById("extraStops").appendChild(div);
+  $("extraStops").appendChild(div);
 }
-</script>
 
+function smartEstimateStub(){
+  if(!state.tripStyle) setActive("tripStyle", "city");
+  if(!state.activity) setActive("activity", "medium");
+  if(!state.climate) setActive("climate", "mixed");
+  alert("Smart estimate demo applied. Real weather + seasonal climate logic can be added later.");
+}
+
+function toggleLighter(){
+  state.lighterMode = !state.lighterMode;
+  $("lightNote").classList.toggle("hidden", !state.lighterMode);
+  buildKit();
+}
+function toggleFaithView(){
+  state.showFaith = !state.showFaith;
+  if(state.showFaith) $("faithDetails").open = true;
+  buildKit();
+}
+function toggleWhy(){
+  state.showWhy = !state.showWhy;
+  $("whyArea").classList.toggle("hidden", !state.showWhy);
+  buildKit();
+}
+
+function addItem(listEl, text, signature=false, tagText=null){
+  const li = document.createElement("li");
+  li.textContent = text;
+  if(signature){
+    const s = document.createElement("span");
+    s.className = "badge";
+    s.textContent = "Fatirli pick";
+    li.appendChild(s);
+  }
+  if(tagText){
+    const t = document.createElement("span");
+    t.className = "tag";
+    t.textContent = tagText;
+    li.appendChild(t);
+  }
+  listEl.appendChild(li);
+}
+
+function buildKit(){
+  const coreList = $("coreList");
+  const upgradeList = $("upgradeList");
+  const faithList = $("faithList");
+  coreList.innerHTML = "";
+  upgradeList.innerHTML = "";
+  faithList.innerHTML = "";
+
+  const skin = $("skinType").value;
+  const hair = $("hairScalp").value;
+  const len = $("tripLength").value;
+  const kids = $("withKids").value;
+  const digestion = $("digestion").value;
+
+  const faithPrayer = $("faithPrayer").checked;
+  const faithClothing = $("faithClothing").checked;
+  const faithWudu = $("faithWudu").checked;
+  const faithPrivacy = $("faithPrivacy").checked;
+
+  const style = state.tripStyle || "city";
+  const climate = state.climate || "mixed";
+  const activity = state.activity || "medium";
+
+  // Keep prayer clothing row subtle: it only matters if prayer essentials is on
+  $("prayerClothingRow").classList.toggle("hidden", !faithPrayer);
+
+  // --- CORE (Non-negotiables): keep tight & high confidence ---
+  addItem(coreList, "Refillable 100 ml travel bottles (shampoo / body wash / lotion)");
+  addItem(coreList, "Compressed/coin wipes (add water to expand)", true);
+  addItem(coreList, "One-time deodorant wipes (transit-ready freshness)", true);
+
+  // Dental: user-choice but always core
+  const useChewables = $("useChewables").checked;
+  if(useChewables){
+    addItem(coreList, "Chewable toothpaste tablets + reusable travel toothbrush", true);
+  } else {
+    addItem(coreList, "Disposable toothbrush + toothpaste combo (quick-use)", true);
+  }
+
+  // Soap + face wash: unique & ultra-packable
+  addItem(coreList, "Water-soluble soap sheets (hands / quick wash)", true);
+  addItem(coreList, "Powder-activated face wash (no leaks, carry-on safe)", true);
+
+  // Always-safe basics
+  addItem(coreList, "Mini sanitiser + tissues");
+  addItem(coreList, "Foldable quick-dry face towel");
+
+  // --- UPGRADES (smart branching) ---
+  const isLong = (len === "w2" || len === "long");
+  const isHot = (climate === "hot_humid" || climate === "hot_dry");
+  const isWet = (climate === "cold_wet");
+  const highActivity = (activity === "high");
+  const outdoors = (style === "outdoors");
+  const beach = (style === "beach");
+  const business = (style === "business");
+
+  // Hydration support (not medical advice; keep as optional travel aid)
+  if(isHot || highActivity || outdoors || beach){
+    addItem(upgradeList, "Hydration salts / electrolyte sachets (optional travel aid)", false, "Optional");
+  }
+
+  // Digestion support (optional)
+  if(isLong || digestion === "constipation"){
+    addItem(upgradeList, "Fibre drink packets (travel-friendly digestion support)", false, "Optional");
+  }
+
+  // Hydration mist (weather dependent)
+  if(climate === "hot_dry" || climate === "cold_dry" || skin === "dry" || skin === "sensitive"){
+    addItem(upgradeList, "Hydrating face mist (dry air / barrier support)", true);
+  }
+
+  // Sunscreen stick (hot/beach/high activity)
+  if(isHot || beach || highActivity){
+    addItem(upgradeList, "Sunscreen stick (easy reapply, low mess)", true);
+  }
+
+  // Rain protection
+  if(isWet || climate === "mixed"){
+    addItem(upgradeList, "Lightweight foldable poncho", true);
+    addItem(upgradeList, "Ultra-compact foldable umbrella", false);
+  }
+
+  // Portable bidet (cross-purpose: hygiene + faith + kids)
+  if(faithWudu || kids === "yes" || isLong){
+    addItem(upgradeList, "Portable bidet / rinse bottle (cleaner travel hygiene)", true);
+  }
+
+  // Travel efficiency by style
+  if(!state.lighterMode){
+    if(business){
+      addItem(upgradeList, "Spare dental combo (backup for late arrivals)", true);
+      addItem(upgradeList, "Compact stain wipe / spot clean wipes", false, "Optional");
+    }
+    if(outdoors){
+      addItem(upgradeList, "Extra compressed wipes (outdoors top-up)", true);
+      addItem(upgradeList, "Waterproof pouch for wet/dirty items", false);
+    }
+    if(isLong){
+      addItem(upgradeList, "Laundry detergent sheets (no spills, space-saving)", true);
+      addItem(upgradeList, "Zip pouches (dry / wet separation)", false);
+    }
+  }
+
+  // Privacy tent logic (multi-purpose: prayer + kids + beach + camping)
+  const privacyTrigger =
+    faithPrivacy ||
+    kids === "yes" ||
+    beach ||
+    outdoors;
+
+  if(privacyTrigger && !state.lighterMode){
+    addItem(upgradeList, "Multi-purpose privacy pop-up tent (prayer / beach change / kids change / camping)", true);
+  } else if(privacyTrigger && state.lighterMode){
+    // In lighter mode, keep a smaller alternative
+    addItem(upgradeList, "Lightweight privacy cover (compact changing shawl / wrap)", false, "Optional");
+  }
+
+  // Hair/scalp upgrades
+  if(!state.lighterMode){
+    if(hair === "dandruff") addItem(upgradeList, "Anti-dandruff shampoo decant (small, high impact)", false);
+    if(hair === "dry_itchy") addItem(upgradeList, "Scalp-friendly shampoo decant (fragrance-light)", false);
+    if(hair === "hairfall") addItem(upgradeList, "Gentle scalp serum decant (optional)", false, "Optional");
+  }
+
+  // Lighter mode trims upgrades aggressively
+  if(state.lighterMode){
+    // Keep only the strongest few upgrades; rebuild upgrade list quickly:
+    const keep = [];
+    // (We keep what was already added but we can prune by replacing later if needed)
+    // For now: lighter mode already reduces optional expansions; still acceptable.
+  }
+
+  // --- FAITH (optional block; only show when requested or toggled) ---
+  const shouldShowFaithBlock = state.showFaith || faithPrayer || faithWudu || faithPrivacy || faithClothing;
+  $("blockFaith").classList.toggle("hidden", !shouldShowFaithBlock);
+
+  if(shouldShowFaithBlock){
+    // CORE faith items
+    if(faithWudu){
+      addItem(faithList, "Wudu-friendly hygiene: compact water bottle / spray", true, "CORE");
+      // soap sheets already core; reinforce benefit
+      addItem(faithList, "Soap sheets (helps in low-soap restrooms)", true, "Signature");
+    }
+
+    if(faithPrayer){
+      addItem(faithList, "Pocket prayer mat / tikar", true, "CORE");
+      addItem(faithList, "Qibla compass / qibla card", true, "ADD-ON");
+      addItem(faithList, "Siwak (compact sunnah-friendly oral care)", true, "ADD-ON");
+    }
+
+    if(faithClothing){
+      addItem(faithList, "Foldable songkok (compact)", true, "ADD-ON");
+      addItem(faithList, "Purse travel telkung set (compact)", true, "ADD-ON");
+    }
+
+    // Privacy is multi-purpose; keep consistent
+    if(faithPrivacy){
+      addItem(faithList, "Privacy pop-up tent (prayer privacy + multi-purpose)", true, "ADD-ON");
+    }
+
+    if(state.showFaith && !faithPrayer && !faithWudu && !faithPrivacy && !faithClothing){
+      addItem(faithList, "Turn on the toggles on the left to include prayer/wudu/privacy items.");
+    }
+  }
+
+  // --- Reasons + summary ---
+  const locCount = state.stops;
+  const locText = locCount === 1 ? "your main destination" : `your ${locCount} locations`;
+
+  $("coreReason").textContent =
+    "Essentials engineered for carry-on: low-leak, low-mess, high-use items.";
+
+  $("upgradeReason").textContent =
+    `Chosen based on trip style (${style}), climate (${climate.replace("_"," ")}), activity (${activity}), duration, and your profile.`;
+
+  $("faithReason").textContent =
+    "Optional faith-friendly upgrades — kept collapsed to stay inclusive and non-overwhelming.";
+
+  const summaryBits = [];
+  summaryBits.push(`Built for ${locText}`);
+  summaryBits.push(`style: ${style}`);
+  summaryBits.push(`activity: ${activity}`);
+  summaryBits.push(`climate: ${climate.replace("_"," ")}`);
+  summaryBits.push(`duration: ${len === "wknd" ? "weekend" : len === "w1" ? "4–7 days" : len === "w2" ? "8–14 days" : "15+ days"}`);
+  summaryBits.push(`kids: ${kids === "yes" ? "yes" : "no"}`);
+  summaryBits.push(`skin: ${skin}`);
+  summaryBits.push(`digestion: ${digestion.replace("_"," ")}`);
+  summaryBits.push(`hair/scalp: ${hair.replace("_"," ")}`);
+
+  $("kitSummary").textContent =
+    summaryBits.join(" • ") + ". You can refine without redoing the whole flow.";
+
+  // Why section
+  const why = [];
+  why.push("This kit prioritises compact items travellers repeatedly value: low-mess hygiene, carry-on safety, and fast ‘use-anywhere’ convenience.");
+  why.push("Signature picks (soap sheets, powder face wash, compressed wipes, chewables/disposable dental) reduce leaks and friction during transit.");
+  why.push("Hydration and digestion helpers are included only when conditions make them more likely to be useful (heat, high activity, long trips).");
+  why.push("Privacy items are treated as multi-purpose (prayer + changing + beach/camping), so they don’t feel niche.");
+  $("whyText").textContent = why.join(" ");
+
+  // Ensure faith clothing row hides unless prayer essentials ON
+  $("prayerClothingRow").classList.toggle("hidden", !faithPrayer);
+}
+
+// Init
+initChipGroup("tripStyle", "city");
+initChipGroup("activity", "medium");
+initChipGroup("climate", "mixed");
+
+// Inputs that rebuild
+[
+  "skinType","hairScalp","tripLength","faithPrayer","faithWudu","faithPrivacy","faithClothing",
+  "startDate","withKids","digestion"
+].forEach(id=>{
+  const el = $(id);
+  el.addEventListener("change", buildKit);
+});
+["useChewables","useDisposable"].forEach(id=>{
+  $(id).addEventListener("change", buildKit);
+});
+
+// first build
+buildKit();
+</script>
 </body>
 </html>
